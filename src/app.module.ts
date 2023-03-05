@@ -7,6 +7,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { TasksModule } from './tasks/tasks.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Task } from './tasks/model/task.model';
 
 @Module({
   imports: [
@@ -23,6 +25,13 @@ import { TasksModule } from './tasks/tasks.module';
       playground: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: ':memory:',
+      entities: [Task],
+      synchronize: true,
+    }),
+    TypeOrmModule.forFeature([Task]),
     TasksModule,
   ],
   controllers: [AppController],

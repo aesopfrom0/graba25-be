@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 import { Task } from './model/task.model';
 import { TasksService } from './tasks.service';
 
@@ -11,7 +11,7 @@ export class TasksResolver {
   async task(@Args('id', { type: () => Int }) id: number): Promise<Task> {
     // fetch task from database using the id
     // return the task as an instance of the Task class
-    return this.tasksService.find();
+    return this.tasksService.find(id);
   }
 
   // // example mutation
