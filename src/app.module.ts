@@ -9,6 +9,7 @@ import { join } from 'path';
 import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './tasks/model/task.model';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { Task } from './tasks/model/task.model';
       database: ':memory:',
       entities: [Task],
       synchronize: true,
+      namingStrategy: new SnakeNamingStrategy(),
     }),
     TypeOrmModule.forFeature([Task]),
     TasksModule,
