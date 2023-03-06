@@ -35,3 +35,5 @@ lerna-debug.log*
 
 #config
 *-config.yml
+
+package-lock.json
