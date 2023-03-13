@@ -8,8 +8,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Task } from './tasks/model/task.model';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { TaskEntity } from './tasks/entities/task.entity';
 
 @Module({
   imports: [
@@ -29,11 +29,11 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: ':memory:',
-      entities: [Task],
+      entities: [TaskEntity],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
+      logging: true,
     }),
-    TypeOrmModule.forFeature([Task]),
     TasksModule,
   ],
   controllers: [AppController],

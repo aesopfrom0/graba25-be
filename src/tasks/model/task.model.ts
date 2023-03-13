@@ -1,4 +1,5 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 @ObjectType()
 export class Task {
@@ -17,7 +18,7 @@ export class Task {
   @Field(() => Int)
   actAttempts!: number;
 
-  @Field()
+  @Field({ defaultValue: '' })
   memo!: string;
 
   @Field()
@@ -25,4 +26,31 @@ export class Task {
 
   @Field()
   updatedAt!: Date;
+}
+
+@InputType('CreateTaskInput')
+export class CreateTaskInput {
+  @Field(() => Int)
+  @IsNumber()
+  @IsNotEmpty()
+  userId!: number;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  title!: string;
+
+  @Field(() => Int, { defaultValue: 1 })
+  @IsNumber()
+  @IsNotEmpty()
+  estAttempts!: number;
+
+  @Field(() => Int, { defaultValue: 0 })
+  @IsNumber()
+  @IsNotEmpty()
+  actAttempts!: number;
+
+  @Field({ defaultValue: '' })
+  @IsString()
+  memo!: string;
 }

@@ -21,3 +21,15 @@ scalar DateTime
 type Query {
   task(id: Int!): Task!
 }
+
+type Mutation {
+  createTask(task: CreateTaskInput!): Task!
+}
+
+input CreateTaskInput {
+  userId: Int!
+  title: String!
+  estAttempts: Int! = 1
+  actAttempts: Int! = 0
+  memo: String! = ""
+}
