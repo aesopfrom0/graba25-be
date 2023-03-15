@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateSchema } from './config/validate-schema';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TaskEntity } from './tasks/entities/task.entity';
 
+const config = new ConfigService();
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,8 +28,14 @@ import { TaskEntity } from './tasks/entities/task.entity';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: ':memory:',
+      // type: 'sqlite',
+      // database: ':memory:',
+      type: 'postgres',
+      host: config.get('db.host'),
+      port: config.get('db.port'),
+      username: config.get('db.username'),
+      password: config.get('db.password'),
+      database: config.get('db.database'),
       entities: [TaskEntity],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),

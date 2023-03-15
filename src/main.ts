@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const env = configService.get('NODE_ENV');
-  const port = configService.get('port');
+  const port = configService.get('server_port');
   await app.listen(port, () => {
     console.log(`${env} server listening on ${port}`);
   });
