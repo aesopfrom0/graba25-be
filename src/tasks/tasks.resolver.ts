@@ -14,6 +14,11 @@ export class TasksResolver {
     return await this.tasksService.findTask(id);
   }
 
+  @Query(() => [Task])
+  async tasks(@Args('userId', { type: () => Int }) userId: number): Promise<Task[]> {
+    return await this.tasksService.findTasksByUser(userId);
+  }
+
   @Mutation(() => Task)
   async createTask(@Args('task') taskInput: CreateTaskInput) {
     return await this.tasksService.createTask(taskInput);

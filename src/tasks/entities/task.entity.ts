@@ -6,12 +6,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'task' })
 export class TaskEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({})
+  @Column({ comment: '유저 id'})
   userId!: number;
 
   @Column({ length: 500, comment: 'task description', default: '' })

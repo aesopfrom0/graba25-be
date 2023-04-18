@@ -33,6 +33,10 @@ export class TasksService extends BaseService {
     return await this.tasksRepository.findOneBy({ id });
   }
 
+  async findTasksByUser(userId: number): Promise<Task[]> {
+    return await this.tasksRepository.find({ where: { userId }});
+  }
+
   async createTask(inputDto: CreateTaskInput): Promise<Task> {
     const task = await this.tasksRepository.create(inputDto);
     await this.tasksRepository.save(task);

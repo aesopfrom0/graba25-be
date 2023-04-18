@@ -20,6 +20,7 @@ scalar DateTime
 
 type Query {
   task(id: Int!): Task!
+  tasks(userId: Int!): [Task!]!
 }
 
 type Mutation {
