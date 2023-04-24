@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const temp = configService.get('notion');
+  console.log(temp);
   const env = configService.get('NODE_ENV');
   const port = configService.get('server_port');
   await app.listen(port, () => {

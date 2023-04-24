@@ -4,7 +4,14 @@
   "sourceRoot": "src",
   "assets": [{
     "include": "../*.yml",
-    "outDir": "./dist",
-    "watchAssets": true
-  }]
+    "outDir": "./dist"
+  }],
+  "compilerOptions": {
+    "assets": [
+      {
+        "include": "../config/*.yaml",
+        "outDir": "./dist/config"
+      }
+    ]
+  }
 }

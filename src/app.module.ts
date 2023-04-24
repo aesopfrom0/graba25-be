@@ -10,12 +10,15 @@ import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TaskEntity } from './tasks/entities/task.entity';
+import { DbServicesModule } from './providers/db-services/db-services.module';
+import configuration from './config/configuration';
 
 const config = new ConfigService();
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`${process.env.NODE_ENV}-config.yml`],
+      // envFilePath: [`./dist/config/${process.env.NODE_ENV}-config.yaml`],
+      load: [configuration],
       isGlobal: true,
       validationSchema: validateSchema(),
       validationOptions: {
@@ -42,6 +45,7 @@ const config = new ConfigService();
       logging: true,
     }),
     TasksModule,
+    DbServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

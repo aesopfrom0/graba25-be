@@ -4,12 +4,14 @@ import { BaseService } from '../providers/base.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from './entities/task.entity';
+import {TaskDbService} from "../providers/db-services/services/task-db.service";
 
 @Injectable()
 export class TasksService extends BaseService {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly tasksRepository: Repository<Task>,
+    private readonly taskDbService: TaskDbService
   ) {
     super();
   }
@@ -42,5 +44,9 @@ export class TasksService extends BaseService {
     await this.tasksRepository.save(task);
     this.logger.debug(`inputDto: ${JSON.stringify(inputDto)}`);
     return task;
+  }
+
+  async getTasks() {
+    return await this.taskDbService.getTasks();
   }
 }
