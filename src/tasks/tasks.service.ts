@@ -1,18 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTaskInput, Task } from './model/task.model';
 import { BaseService } from '../providers/base.service';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { TaskEntity } from './entities/task.entity';
-import {TaskDbService} from "../providers/db-services/services/task-db.service";
+import { TaskDbService } from '../providers/db-services/services/task-db.service';
 
 @Injectable()
 export class TasksService extends BaseService {
-  constructor(
-    @InjectRepository(TaskEntity)
-    private readonly tasksRepository: Repository<Task>,
-    private readonly taskDbService: TaskDbService
-  ) {
+  constructor(private readonly taskDbService: TaskDbService) {
     super();
   }
   // readonly #task: Task = {
@@ -30,21 +22,6 @@ export class TasksService extends BaseService {
   //   this.logger.log(`id: ${id}`);
   //   return this.#task;
   // }
-
-  async findTask(id: number): Promise<Task | null> {
-    return await this.tasksRepository.findOneBy({ id });
-  }
-
-  async findTasksByUser(userId: number): Promise<Task[]> {
-    return await this.tasksRepository.find({ where: { userId }});
-  }
-
-  async createTask(inputDto: CreateTaskInput): Promise<Task> {
-    const task = await this.tasksRepository.create(inputDto);
-    await this.tasksRepository.save(task);
-    this.logger.debug(`inputDto: ${JSON.stringify(inputDto)}`);
-    return task;
-  }
 
   async getTasks() {
     return await this.taskDbService.getTasks();
