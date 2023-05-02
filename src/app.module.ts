@@ -6,11 +6,10 @@ import { validateSchema } from './config/validate-schema';
 import { TasksModule } from './tasks/tasks.module';
 import { DbServicesModule } from './providers/db-services/db-services.module';
 
-const config = new ConfigService();
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`${__dirname}/config/.${config.get('NODE_ENV')}.env`],
+      envFilePath: [`${__dirname}/config/.${process.env.NODE_ENV}.env`],
       isGlobal: true,
       validationSchema: validateSchema(),
       validationOptions: {
