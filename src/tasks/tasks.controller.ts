@@ -29,4 +29,9 @@ export class TasksController {
   async deleteTask(@Param('id') id: string): Promise<BaseResponseDto> {
     return await this.tasksService.deleteTask(id);
   }
+
+  @Get(':id')
+  async getTaskById(@Param('id') id: string) {
+    return await this.tasksService.getAllBlocks(id);
+  }
 }

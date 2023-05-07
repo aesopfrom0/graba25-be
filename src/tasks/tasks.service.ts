@@ -40,4 +40,8 @@ export class TasksService extends BaseService {
   async deleteTask(id: string): Promise<BaseResponseDto> {
     return await this.taskDbService.deleteTask(id);
   }
+
+  async getAllBlocks(id: string) {
+    return await this.taskDbService.getAllBlocks(id);
+  }
 }
