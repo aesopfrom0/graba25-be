@@ -42,6 +42,7 @@ export class TaskDbService extends BaseService {
         },
       })
     )?.results;
+    console.log(resp);
     const result = [] as GetTaskDto[];
     resp.forEach((task) => {
       const properties = task['properties'];
@@ -156,6 +157,20 @@ export class TaskDbService extends BaseService {
     try {
       const resp = await this.#notion.pages.update({ page_id: id, archived: true });
       return { ok: true, message: `${resp.id} deleted (actually archived)` };
+    } catch (e) {
+      this.logger.error(e);
+      return { ok: false, error: JSON.stringify(e) };
+    }
+  }
+
+  async getAllBlocks(pageId: string) {
+    try {
+      const resp = await this.#notion.blocks.children.list({
+        block_id: pageId,
+        page_size: 100,
+      });
+      console.log(resp);
+      return resp.results;
     } catch (e) {
       this.logger.error(e);
       return { ok: false, error: JSON.stringify(e) };

@@ -45,4 +45,8 @@ export class TasksService extends BaseService {
     const tasksToBeArchived = tasks.map((task) => ({ ...task, isArchived: true }));
     return await this.taskDbService.updateTasks(tasksToBeArchived);
   }
+
+  async getAllBlocks(id: string) {
+    return await this.taskDbService.getAllBlocks(id);
+  }
 }
