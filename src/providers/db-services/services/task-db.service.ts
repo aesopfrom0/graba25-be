@@ -18,7 +18,7 @@ export class TaskDbService extends BaseService {
     this.#dbId = this.#config.get('NOTION_TASK_TABLE_ID') ?? '';
   }
 
-  async getTasks(): Promise<GetTaskDto[]> {
+  async getTasks(isArchived = false): Promise<GetTaskDto[]> {
     const resp = (
       await this.#notion.databases.query({
         database_id: this.#dbId,
@@ -28,6 +28,18 @@ export class TaskDbService extends BaseService {
             direction: 'descending',
           },
         ],
+        filter: {
+          and: [
+            {
+              property: 'isArchived',
+              checkbox: { equals: isArchived },
+            },
+            // {
+            //   property: 'isFinished',
+            //   checkbox: { equals: isFinished },
+            // },
+          ],
+        },
       })
     )?.results;
     const result = [] as GetTaskDto[];
@@ -41,6 +53,8 @@ export class TaskDbService extends BaseService {
           memo: properties.memo?.rich_text[0]?.plain_text,
           actAttempts: properties.actAttempts.number,
           estAttempts: properties.estAttempts.number,
+          isFinished: properties.isFinished.checkbox,
+          isArchived: properties.isArchived.checkbox,
           createdAt: properties.createdAt.created_time as string,
           updatedAt: properties.updatedAt.last_edited_time,
         });
@@ -67,9 +81,29 @@ export class TaskDbService extends BaseService {
     }
   }
 
+  async updateTasks(tasks: UpdateTaskDto[]): Promise<BaseResponseDto> {
+    let ok = true;
+    let notUpdatedTaskIds = '';
+    try {
+      await Promise.all(
+        tasks.map(async (task) => {
+          const resp = await this.updateTask(task);
+          if (!resp.ok) {
+            ok = false;
+            notUpdatedTaskIds.concat(`,${task.id}`);
+          }
+        }),
+      );
+      return { ok, message: `${tasks.length} tasks successfully updated` };
+    } catch (e) {
+      this.logger.error(e);
+      return { ok: false, error: 'notUpdatedTaskIds' + notUpdatedTaskIds + JSON.stringify(e) };
+    }
+  }
+
   async updateTask(dto: UpdateTaskDto): Promise<BaseResponseDto> {
     try {
-      const { title, memo, actAttempts, estAttempts } = dto;
+      const { title, memo, actAttempts, estAttempts, isFinished, isArchived } = dto;
       const updatedFields = {};
       !isNil(title) &&
         (updatedFields['title'] = {
@@ -98,6 +132,14 @@ export class TaskDbService extends BaseService {
       !isNil(estAttempts) &&
         (updatedFields['estAttempts'] = {
           number: estAttempts,
+        });
+      !isNil(isFinished) &&
+        (updatedFields['isFinished'] = {
+          checkbox: isFinished,
+        });
+      !isNil(isArchived) &&
+        (updatedFields['isArchived'] = {
+          checkbox: isArchived,
         });
       const resp = await this.#notion.pages.update({
         page_id: dto.id,

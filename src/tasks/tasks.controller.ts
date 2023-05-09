@@ -17,6 +17,11 @@ export class TasksController {
     return await this.tasksService.createTask(taskDto);
   }
 
+  @Patch('archive')
+  async archiveTasks(@Body() archiveTasks: UpdateTaskDto[]): Promise<BaseResponseDto> {
+    return await this.tasksService.archiveTasks(archiveTasks);
+  }
+
   @Patch(':id')
   async updateTask(
     @Param('id') id: string,

@@ -11,6 +11,8 @@ export class BaseTaskDto extends CreateTaskBodyDto {
 
 export class GetTaskDto extends BaseTaskDto {
   id!: string;
+  isFinished!: boolean;
+  isArchived!: boolean;
   createdAt!: string;
   updatedAt!: string;
 }
@@ -19,6 +21,14 @@ export class UpdateTaskDto {
   id!: string;
   title?: string;
   memo?: string;
+  isFinished?: boolean;
+  isArchived?: boolean;
   actAttempts?: number;
   estAttempts?: number;
+}
+
+export class ArchiveTaskDto {
+  id!: string;
+  isFinished!: boolean;
+  isArchived!: boolean;
 }
