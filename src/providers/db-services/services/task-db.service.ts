@@ -18,7 +18,7 @@ export class TaskDbService extends BaseService {
     this.#dbId = this.#config.get('NOTION_TASK_TABLE_ID') ?? '';
   }
 
-  async getTasks(isArchived = false): Promise<GetTaskDto[]> {
+  async getTasks(isArchived: boolean): Promise<GetTaskDto[]> {
     const resp = (
       await this.#notion.databases.query({
         database_id: this.#dbId,
@@ -42,7 +42,6 @@ export class TaskDbService extends BaseService {
         },
       })
     )?.results;
-    console.log(resp);
     const result = [] as GetTaskDto[];
     resp.forEach((task) => {
       const properties = task['properties'];
