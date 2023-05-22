@@ -43,6 +43,14 @@ export class TasksController {
     return await this.tasksService.updateTask({ ...taskDto, id });
   }
 
+  @Patch(':id/active')
+  async setCurrentTask(
+    @Param('id') id: string,
+    @Body() taskDto: UpdateTaskDto,
+  ): Promise<BaseResponseDto> {
+    return await this.tasksService.setCurrentTask(id);
+  }
+
   @Delete(':id')
   async deleteTask(@Param('id') id: string): Promise<BaseResponseDto> {
     return await this.tasksService.deleteTask(id);

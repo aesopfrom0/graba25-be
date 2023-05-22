@@ -49,4 +49,21 @@ export class TasksService extends BaseService {
   async getAllBlocks(id: string) {
     return await this.taskDbService.getAllBlocks(id);
   }
+
+  async setCurrentTask(taskId: string): Promise<BaseResponseDto> {
+    try {
+      const prevTask = await this.taskDbService.getCurrentTask();
+      if (prevTask) {
+        await this.taskDbService.updateTask({ ...prevTask, isCurrentTask: false });
+      }
+      await this.taskDbService.updateTask({ id: taskId, isCurrentTask: true });
+      return {
+        ok: true,
+        message: 'set the current task and released the previously focused task.',
+      };
+    } catch (e) {
+      this.logger.error(e);
+      return { ok: false, error: JSON.stringify(e) };
+    }
+  }
 }

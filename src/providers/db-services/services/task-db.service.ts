@@ -109,7 +109,7 @@ export class TaskDbService extends BaseService {
 
   async updateTask(dto: UpdateTaskDto): Promise<BaseResponseDto> {
     try {
-      const { title, memo, actAttempts, estAttempts, isFinished, isArchived } = dto;
+      const { title, memo, actAttempts, estAttempts, isFinished, isArchived, isCurrentTask } = dto;
       const updatedFields = {};
       !isNil(title) &&
         (updatedFields['title'] = {
@@ -147,6 +147,11 @@ export class TaskDbService extends BaseService {
         (updatedFields['isArchived'] = {
           checkbox: isArchived,
         });
+      !isNil(isCurrentTask) &&
+        (updatedFields['isCurrentTask'] = {
+          checkbox: isCurrentTask,
+        });
+
       const resp = await this.#notion.pages.update({
         page_id: dto.id,
         properties: updatedFields,
@@ -179,6 +184,14 @@ export class TaskDbService extends BaseService {
               direction: 'descending',
             },
           ],
+          filter: {
+            and: [
+              {
+                property: 'isCurrentTask',
+                checkbox: { equals: true },
+              },
+            ],
+          },
         })
       )?.results[0];
       if (!resp) {
