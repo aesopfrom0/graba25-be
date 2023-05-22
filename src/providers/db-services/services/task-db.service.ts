@@ -1,6 +1,11 @@
 import { Client, LogLevel } from '@notionhq/client';
 import { ConfigService } from '@nestjs/config';
-import { GetTaskDto, BaseTaskDto, UpdateTaskDto } from '../../../tasks/dtos/base-task.dto';
+import {
+  GetTaskDto,
+  BaseTaskDto,
+  UpdateTaskDto,
+  getCurrentTaskDto,
+} from '../../../tasks/dtos/base-task.dto';
 import { BaseResponseDto } from '../../../shared/dtos/base-response.dto';
 import { BaseService } from '../../base.service';
 import { isNil } from '@nestjs/common/utils/shared.utils';
@@ -55,6 +60,7 @@ export class TaskDbService extends BaseService {
           estAttempts: properties.estAttempts.number,
           isFinished: properties.isFinished.checkbox,
           isArchived: properties.isArchived.checkbox,
+          isCurrentTask: properties.isCurrentTask.checkbox,
           createdAt: properties.createdAt.created_time as string,
           updatedAt: properties.updatedAt.last_edited_time,
         });
@@ -159,6 +165,36 @@ export class TaskDbService extends BaseService {
     } catch (e) {
       this.logger.error(e);
       return { ok: false, error: JSON.stringify(e) };
+    }
+  }
+
+  async getCurrentTask(): Promise<getCurrentTaskDto | null> {
+    try {
+      const resp = (
+        await this.#notion.databases.query({
+          database_id: this.#dbId,
+          sorts: [
+            {
+              property: 'updatedAt',
+              direction: 'descending',
+            },
+          ],
+        })
+      )?.results[0];
+      if (!resp) {
+        throw new Error(`can't find user's current task.`);
+      }
+
+      const properties = resp['properties'];
+      return properties
+        ? {
+            id: resp.id,
+            isCurrentTask: properties.isCurrentTask.checkbox,
+          }
+        : null;
+    } catch (e) {
+      this.logger.error(e);
+      return null;
     }
   }
 

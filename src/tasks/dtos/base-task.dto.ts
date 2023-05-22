@@ -13,6 +13,7 @@ export class GetTaskDto extends BaseTaskDto {
   id!: string;
   isFinished!: boolean;
   isArchived!: boolean;
+  isCurrentTask?: boolean;
   createdAt!: string;
   updatedAt!: string;
 }
@@ -25,6 +26,12 @@ export class UpdateTaskDto {
   isArchived?: boolean;
   actAttempts?: number;
   estAttempts?: number;
+  isCurrentTask?: boolean;
+}
+
+export class getCurrentTaskDto {
+  id!: string;
+  isCurrentTask!: string;
 }
 
 export class ArchiveTaskDto {
