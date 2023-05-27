@@ -29,8 +29,8 @@ export class TaskDbService extends BaseService {
         database_id: this.#dbId,
         sorts: [
           {
-            property: 'updatedAt',
-            direction: 'descending',
+            property: 'createdAt',
+            direction: 'ascending',
           },
         ],
         filter: {
