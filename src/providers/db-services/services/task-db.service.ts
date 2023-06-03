@@ -80,7 +80,7 @@ export class TaskDbService extends BaseService {
           estAttempts: { number: dto.estAttempts },
         },
       });
-      return { ok: true, message: `${resp.id} task created` };
+      return { ok: true, message: resp.id };
     } catch (e) {
       this.logger.error(e);
       return { ok: false, error: JSON.stringify(e) };
