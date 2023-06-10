@@ -20,7 +20,7 @@ export class TaskDbService extends BaseService {
     super();
     this.#notionApiKey = this.#config.get('NOTION_API_KEY') ?? '';
     this.#notion = new Client({ auth: this.#notionApiKey, logLevel: LogLevel.DEBUG });
-    this.#dbId = this.#config.get('NOTION_TASK_TABLE_ID') ?? '';
+    this.#dbId = this.#config.get('TASK_TABLE_ID') ?? '';
   }
 
   async getTasks(isArchived: boolean): Promise<GetTaskDto[]> {
