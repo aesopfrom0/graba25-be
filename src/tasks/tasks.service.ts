@@ -3,12 +3,15 @@ import { BaseService } from '../providers/base.service';
 import { TaskDbService } from '../providers/db-services/services/task-db.service';
 import { GetTaskDto, BaseTaskDto, UpdateTaskDto, ArchiveTaskDto } from './dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
-import { BaseTimeLogDto } from './dtos/time-log.dto';
+import { BaseTimeLogDto, CreateTimeLogDto } from './dtos/time-log.dto';
 import { TimeLogDbService } from 'src/providers/db-services/services/time-log-db.service';
 
 @Injectable()
 export class TasksService extends BaseService {
-  constructor(private readonly taskDbService: TaskDbService, private readonly timeLogDbService: TimeLogDbService) {
+  constructor(
+    private readonly taskDbService: TaskDbService,
+    private readonly timeLogDbService: TimeLogDbService,
+  ) {
     super();
   }
   // readonly #task: Task = {
@@ -69,7 +72,7 @@ export class TasksService extends BaseService {
     }
   }
 
-  async createTimeLog(dto: BaseTimeLogDto) {
+  async createTimeLog(dto: CreateTimeLogDto) {
     return await this.timeLogDbService.createTimeLog(dto);
   }
 }

@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { BaseTimeLogDto } from 'src/tasks/dtos/time-log.dto';
+import { CreateTimeLogDto, GetTimeLogDto } from 'src/tasks/dtos/time-log.dto';
 import { BaseDbService } from './base-db.service';
 
 @Injectable()
 export class TimeLogDbService extends BaseDbService {
   readonly #dbId: string;
+  readonly #taskDbId: string;
 
   constructor() {
     super();
     this.#dbId = this.config.get('TIME_LOG_TABLE_ID') ?? '';
+    this.#taskDbId = this.config.get('TASK_TABLE_ID') ?? '';
   }
 
-  async createTimeLog(dto: BaseTimeLogDto) {
+  async createTimeLog(dto: CreateTimeLogDto) {
     console.log(this.#dbId);
     console.log(dto);
     try {
       const { taskId, userId, durationSecs, dateTimeRange } = dto;
       const properties = {
         title: { title: [{ text: { content: '' } }] },
-        taskId: { rich_text: [{ text: { content: taskId } }] },
         userId: { number: userId },
         durationSecs: { number: durationSecs },
         dateTimeRange: { date: dateTimeRange },
+        task: { relation: [{ id: taskId }] },
       };
 
       const resp = await this.notion.pages.create({
@@ -34,5 +36,57 @@ export class TimeLogDbService extends BaseDbService {
       this.logger.error(e);
       return { ok: false, error: JSON.stringify(e) };
     }
+  }
+
+  async getTimeLogs(): Promise<GetTimeLogDto[]> {
+    const resp = (
+      await this.notion.databases.query({
+        database_id: this.#dbId,
+        // relation?
+        sorts: [
+          {
+            property: 'createdAt',
+            direction: 'descending',
+          },
+        ],
+        filter: {
+          or: [
+            {
+              property: 'task',
+              relation: {
+                is_not_empty: true,
+              },
+            },
+          ],
+        },
+      })
+    )?.results;
+    const result = [] as GetTimeLogDto[];
+    for (const log of resp) {
+      const properties = log['properties'];
+
+      // Fetch the related task data
+      const taskRelation = properties.task.relation;
+      console.log(taskRelation);
+      const task = await this.notion.pages.retrieve({ page_id: taskRelation[0].id });
+      console.log('-----------------------------------');
+      console.log(task);
+      console.log('-----------------------------------');
+      const taskId = task.id;
+      const taskTitle = task['properties'].title.title[0].plain_text ?? '';
+
+      properties &&
+        result.push({
+          id: log.id,
+          userId: properties.userId.number,
+          durationSecs: properties.durationSecs.number,
+          dateTimeRange: properties.dateTimeRange.date,
+          task: {
+            id: taskId,
+            title: taskTitle,
+          },
+        });
+    }
+    return result;
   }
 }

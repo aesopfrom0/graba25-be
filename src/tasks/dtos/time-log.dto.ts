@@ -9,13 +9,20 @@ class DateTimeRange {
 }
 
 export class BaseTimeLogDto {
-  taskId!: string;
   userId = 1;
   durationSecs!: number;
   @ValidateNested()
   dateTimeRange!: DateTimeRange;
 }
 
+export class CreateTimeLogDto extends BaseTimeLogDto {
+  taskId!: string;
+}
+
 export class GetTimeLogDto extends BaseTimeLogDto {
   id!: string;
+  task!: {
+    id: string;
+    title: string;
+  };
 }
