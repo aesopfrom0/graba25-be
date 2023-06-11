@@ -1,11 +1,4 @@
-import { IsDateString, IsOptional } from "class-validator";
-
-export class BaseTimeLogDto {
-  taskId!: string;
-  userId = 1;
-  durationSecs!: number;
-  dateTimeRange!: DateTimeRange;
-}
+import { IsDateString, IsOptional, ValidateNested } from 'class-validator';
 
 class DateTimeRange {
   @IsDateString()
@@ -13,6 +6,14 @@ class DateTimeRange {
   @IsOptional()
   @IsDateString()
   end?: string;
+}
+
+export class BaseTimeLogDto {
+  taskId!: string;
+  userId = 1;
+  durationSecs!: number;
+  @ValidateNested()
+  dateTimeRange!: DateTimeRange;
 }
 
 export class GetTimeLogDto extends BaseTimeLogDto {
