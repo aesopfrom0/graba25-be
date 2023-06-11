@@ -9,23 +9,22 @@ import {
 import { BaseResponseDto } from '../../../shared/dtos/base-response.dto';
 import { BaseService } from '../../base.service';
 import { isNil } from '@nestjs/common/utils/shared.utils';
+import { Injectable } from '@nestjs/common';
+import { BaseDbService } from './base-db.service';
 
-export class TaskDbService extends BaseService {
+@Injectable()
+export class TaskDbService extends BaseDbService {
   readonly #config = new ConfigService();
-  readonly #notionApiKey: string;
-  readonly #notion: Client;
   readonly #dbId: string;
 
   constructor() {
     super();
-    this.#notionApiKey = this.#config.get('NOTION_API_KEY') ?? '';
-    this.#notion = new Client({ auth: this.#notionApiKey, logLevel: LogLevel.DEBUG });
     this.#dbId = this.#config.get('TASK_TABLE_ID') ?? '';
   }
 
   async getTasks(isArchived: boolean): Promise<GetTaskDto[]> {
     const resp = (
-      await this.#notion.databases.query({
+      await this.notion.databases.query({
         database_id: this.#dbId,
         sorts: [
           {
@@ -70,7 +69,7 @@ export class TaskDbService extends BaseService {
 
   async createTask(dto: BaseTaskDto): Promise<BaseResponseDto> {
     try {
-      const resp = await this.#notion.pages.create({
+      const resp = await this.notion.pages.create({
         parent: { database_id: this.#dbId },
         properties: {
           title: { title: [{ text: { content: dto.title } }] },
@@ -152,7 +151,7 @@ export class TaskDbService extends BaseService {
           checkbox: isCurrentTask,
         });
 
-      const resp = await this.#notion.pages.update({
+      const resp = await this.notion.pages.update({
         page_id: dto.id,
         properties: updatedFields,
       });
@@ -165,7 +164,7 @@ export class TaskDbService extends BaseService {
 
   async deleteTask(id: string) {
     try {
-      const resp = await this.#notion.pages.update({ page_id: id, archived: true });
+      const resp = await this.notion.pages.update({ page_id: id, archived: true });
       return { ok: true, message: `${resp.id} deleted (actually archived)` };
     } catch (e) {
       this.logger.error(e);
@@ -176,7 +175,7 @@ export class TaskDbService extends BaseService {
   async getCurrentTask(): Promise<getCurrentTaskDto | null> {
     try {
       const resp = (
-        await this.#notion.databases.query({
+        await this.notion.databases.query({
           database_id: this.#dbId,
           sorts: [
             {
@@ -213,7 +212,7 @@ export class TaskDbService extends BaseService {
 
   async getAllBlocks(pageId: string) {
     try {
-      const resp = await this.#notion.blocks.children.list({
+      const resp = await this.notion.blocks.children.list({
         block_id: pageId,
         page_size: 100,
       });

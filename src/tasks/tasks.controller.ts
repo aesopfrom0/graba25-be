@@ -13,6 +13,7 @@ import {
 import { TasksService } from './tasks.service';
 import { GetTaskDto, BaseTaskDto, UpdateTaskDto } from './dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
+import { BaseTimeLogDto } from './dtos/time-log.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -59,5 +60,10 @@ export class TasksController {
   @Get(':id')
   async getTaskById(@Param('id') id: string) {
     return await this.tasksService.getAllBlocks(id);
+  }
+  
+  @Post('time-log')
+  async createTimeLog(@Body() timeLogDto: BaseTimeLogDto) {
+    return await this.tasksService.createTimeLog(timeLogDto);
   }
 }
