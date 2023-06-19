@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateSchema } from './config/validate-schema';
 import { TasksModule } from './tasks/tasks.module';
 import { DbServicesModule } from './providers/db-services/db-services.module';
+import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { DbServicesModule } from './providers/db-services/db-services.module';
     TasksModule,
     DbServicesModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [AppService],
 })
 export class AppModule {}
