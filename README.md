@@ -58,7 +58,7 @@ $ npm i
     <img width="988" alt="스크린샷 2023-06-23 11 27 12" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/2d4571f6-3398-4cb4-8132-4992c4efc25c">
 
     
-    웹 주소에서 마지막 경로 인자인 task_table_id 기록
+    웹 주소에서 마지막 URL 경로인 task_table_id 기록
     <img width="1479" alt="스크린샷 2023-06-23 11 31 15" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/b0193e44-85ee-4564-a30f-210888b7883b">
 
     
