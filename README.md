@@ -1,73 +1,83 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 프로젝트 설명
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+https://github.com/aesopfrom0/graba25
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+GRABA25-API는 시간관리 웹 앱인 [pomofocus.io](http://pomofocus.io)를 클론한 GRABA25 프로젝트를 위한 API입니다.
 
-## Description
+평소 개인/직장에서 업무 수행 시 [pomofocus.io](http://pomofocus.io) 서비스를 사용하면서 불편한 점은 다음과 같습니다.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- 같은 task를 두 번 적어야함 (Notion, 시간관리 앱)
+- 시간관리 앱에서의 기록은 notion에 연동되지 않음
+- 기존 pomofocus.io에서는 제목과 메모만 기록 가능하기에 자세한 내용을 기록/조회하기 불편함 (* v0.1.0 현재 아직 개발 안 됨)
 
-## Installation
+이를 해결하고자 본 프로젝트에서는 Notion을 DB처럼 이용하였습니다.
 
-```bash
-$ npm install
+# 개발 환경
+
+- Node.js (>= 18.0.0)
+- npm (>= 8.0.0)
+
+# 실행 방법
+
+1. 레포지토리 클론
+2. npm 패키지 설치
+
+```
+$ npm i
 ```
 
-## Running the app
+3. notion 가입 및 API 키 생성
+    1. https://www.notion.so/my-integrations
+        1. 참조:  https://developers.notion.com/docs/create-a-notion-integration
+    2. (사용하려는 API 통합이 없다면) `+새 API 통합 만들기` 
+    3. `프라이빗 API 통합 시크릿` **확인**
+4. DB로 사용할 페이지 생성 후 API 연결 추가
+    
+   <img width="1485" alt="스크린샷 2023-06-23 11 01 44" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/19adc4e7-0dd8-4fb3-9290-89be9345fc4d">
 
-```bash
-# development
-$ npm run start
+    
+   <img width="1490" alt="스크린샷 2023-06-23 11 02 01" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/e723893f-bd09-4b45-9004-38a67cc0255c">
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
+5. task 테이블 생성
+    
+    API 통합과 연결된 페이지에서 `/table` 명령어 → `데이터베이스 > 표 보기` 선택
+    <img width="1091" alt="스크린샷 2023-06-23 11 11 45" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/31868757-127c-4aa5-b00d-75e6b16cbe15">
+
+    
+    `+ 새 데이터 베이스 생성`
+    <img width="828" alt="스크린샷 2023-06-23 11 11 56" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/5bdbca1b-0319-492e-a454-9d34383fbb93">
+
+
+    
+    아래 테이블 상세 참조하여 컬럼 입력
+    <img width="834" alt="스크린샷 2023-06-23 11 17 38" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/56851d30-f09c-4a91-911d-488b12bfd8e3">
+
+    
+    전체 페이지로 열기 후 
+    <img width="988" alt="스크린샷 2023-06-23 11 27 12" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/2d4571f6-3398-4cb4-8132-4992c4efc25c">
+
+    
+    웹 주소에서 마지막 경로 인자인 task_table_id 기록
+    <img width="1479" alt="스크린샷 2023-06-23 11 31 15" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/b0193e44-85ee-4564-a30f-210888b7883b">
+
+    
+6. 환경변수 추가 .prod.env
+
+```
+PORT=
+
+NOTION_API_KEY=
+TASK_TABLE_ID=
 ```
 
-## Test
+7. 실행
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+npm run start:prod
 ```
 
-## Support
+# 테이블 상세
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## task
+<img width="256" alt="스크린샷 2023-06-23 11 48 39" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/27ca3363-ff65-41d6-b935-2b159b88197c">
