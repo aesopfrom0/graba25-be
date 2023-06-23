@@ -37,6 +37,6 @@ lerna-debug.log*
 *.config.yml
 *.config.yaml
 *.env
+!.env.example
 
 package-lock.json
-
