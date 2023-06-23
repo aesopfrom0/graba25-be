@@ -14,8 +14,6 @@ export class TimeLogDbService extends BaseDbService {
   }
 
   async createTimeLog(dto: CreateTimeLogDto) {
-    console.log(this.#dbId);
-    console.log(dto);
     try {
       const { taskId, userId, durationSecs, dateTimeRange } = dto;
       const properties = {
@@ -67,11 +65,8 @@ export class TimeLogDbService extends BaseDbService {
 
       // Fetch the related task data
       const taskRelation = properties.task.relation;
-      console.log(taskRelation);
       const task = await this.notion.pages.retrieve({ page_id: taskRelation[0].id });
-      console.log('-----------------------------------');
-      console.log(task);
-      console.log('-----------------------------------');
+
       const taskId = task.id;
       const taskTitle = task['properties'].title.title[0].plain_text ?? '';
 

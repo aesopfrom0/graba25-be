@@ -3,7 +3,7 @@ import { BaseService } from '../providers/base.service';
 import { TaskDbService } from '../providers/db-services/services/task-db.service';
 import { GetTaskDto, BaseTaskDto, UpdateTaskDto, ArchiveTaskDto } from './dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
-import { BaseTimeLogDto, CreateTimeLogDto } from './dtos/time-log.dto';
+import { CreateTimeLogDto } from './dtos/time-log.dto';
 import { TimeLogDbService } from 'src/providers/db-services/services/time-log-db.service';
 
 @Injectable()
@@ -14,21 +14,6 @@ export class TasksService extends BaseService {
   ) {
     super();
   }
-  // readonly #task: Task = {
-  //   id: 1,
-  //   userId: 1,
-  //   title: '',
-  //   estAttempts: 1,
-  //   actAttempts: 1,
-  //   memo: '',
-  //   createdAt: new Date(),
-  //   updatedAt: new Date(),
-  // };
-
-  // find(id): Task {
-  //   this.logger.log(`id: ${id}`);
-  //   return this.#task;
-  // }
 
   async getTasks(includeArchived: boolean): Promise<GetTaskDto[]> {
     return await this.taskDbService.getTasks(includeArchived);

@@ -38,10 +38,6 @@ export class TaskDbService extends BaseDbService {
               property: 'isArchived',
               checkbox: { equals: isArchived },
             },
-            // {
-            //   property: 'isFinished',
-            //   checkbox: { equals: isFinished },
-            // },
           ],
         },
       })
@@ -95,7 +91,7 @@ export class TaskDbService extends BaseDbService {
           const resp = await this.updateTask(task);
           if (!resp.ok) {
             ok = false;
-            notUpdatedTaskIds.concat(`,${task.id}`);
+            notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${task.id}`);
           }
         }),
       );
