@@ -62,7 +62,7 @@ $ npm i
     <img width="1479" alt="스크린샷 2023-06-23 11 31 15" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/b0193e44-85ee-4564-a30f-210888b7883b">
 
     
-6. 환경변수 추가 .prod.env
+6. src/config/ 경로에 환경변수 파일 추가 .prod.env
 
 ```
 PORT=
