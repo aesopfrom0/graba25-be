@@ -6,5 +6,6 @@ export function validateSchema() {
     PORT: Joi.number().required(),
     NOTION_API_KEY: Joi.string().required(),
     TASK_TABLE_ID: Joi.string().required(),
+    MIGRATE_DB: Joi.boolean().default(false),
   });
 }

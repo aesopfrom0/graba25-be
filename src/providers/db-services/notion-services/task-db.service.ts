@@ -1,4 +1,3 @@
-import { Client, LogLevel } from '@notionhq/client';
 import { ConfigService } from '@nestjs/config';
 import {
   GetTaskDto,
@@ -7,7 +6,6 @@ import {
   getCurrentTaskDto,
 } from '../../../tasks/dtos/base-task.dto';
 import { BaseResponseDto } from '../../../shared/dtos/base-response.dto';
-import { BaseService } from '../../base.service';
 import { isNil } from '@nestjs/common/utils/shared.utils';
 import { Injectable } from '@nestjs/common';
 import { BaseDbService } from './base-db.service';
@@ -219,6 +217,4 @@ export class TaskDbService extends BaseDbService {
       return { ok: false, error: JSON.stringify(e) };
     }
   }
-
-  // #addUpdateFields(...args) {}
 }

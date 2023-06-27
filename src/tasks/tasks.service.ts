@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from '../providers/base.service';
-import { TaskDbService } from '../providers/db-services/services/task-db.service';
+import { TaskDbService } from '../providers/db-services/notion-services/task-db.service';
 import { GetTaskDto, BaseTaskDto, UpdateTaskDto, ArchiveTaskDto } from './dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
 import { CreateTimeLogDto } from './dtos/time-log.dto';
-import { TimeLogDbService } from 'src/providers/db-services/services/time-log-db.service';
+import { TimeLogDbService } from 'src/providers/db-services/notion-services/time-log-db.service';
 
 @Injectable()
 export class TasksService extends BaseService {
