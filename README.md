@@ -31,35 +31,18 @@ $ npm i
         1. 참조:  https://developers.notion.com/docs/create-a-notion-integration
     2. (사용하려는 API 통합이 없다면) `+새 API 통합 만들기` 
     3. `프라이빗 API 통합 시크릿` **확인**
+  
 4. DB로 사용할 페이지 생성 후 API 연결 추가
-    
-   <img width="1485" alt="스크린샷 2023-06-23 11 01 44" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/19adc4e7-0dd8-4fb3-9290-89be9345fc4d">
+    다음 notion 페이지를 개인 워크스페이스로 복제 https://aesopballer.notion.site/GRABA25-DB-1c5678fc8cb1401fa58eb35a0982af9e?pvs=4
+<img width="1158" alt="스크린샷 2023-07-02 13 40 31" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/5a4a1b5d-c465-4f73-9c1a-9b753a54cb32">
 
-    
-   <img width="1490" alt="스크린샷 2023-06-23 11 02 01" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/e723893f-bd09-4b45-9004-38a67cc0255c">
+   페이지에 있는 `task 테이블 생성` 버튼 클릭
+   
+   전체 페이지로 열기 후 
+   <img width="988" alt="스크린샷 2023-06-23 11 27 12" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/2d4571f6-3398-4cb4-8132-4992c4efc25c">
 
-
-5. task 테이블 생성
-    
-    API 통합과 연결된 페이지에서 `/table` 명령어 → `데이터베이스 > 표 보기` 선택
-    <img width="1091" alt="스크린샷 2023-06-23 11 11 45" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/31868757-127c-4aa5-b00d-75e6b16cbe15">
-
-    
-    `+ 새 데이터 베이스 생성`
-    <img width="828" alt="스크린샷 2023-06-23 11 11 56" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/5bdbca1b-0319-492e-a454-9d34383fbb93">
-
-
-    
-    아래 테이블 상세 참조하여 컬럼 입력
-    <img width="834" alt="스크린샷 2023-06-23 11 17 38" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/56851d30-f09c-4a91-911d-488b12bfd8e3">
-
-    
-    전체 페이지로 열기 후 
-    <img width="988" alt="스크린샷 2023-06-23 11 27 12" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/2d4571f6-3398-4cb4-8132-4992c4efc25c">
-
-    
-    웹 주소에서 마지막 URL 경로인 task_table_id 기록
-    <img width="1479" alt="스크린샷 2023-06-23 11 31 15" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/b0193e44-85ee-4564-a30f-210888b7883b">
+   웹 주소에서 마지막 URL 경로인 task_table_id 기록
+   <img width="1479" alt="스크린샷 2023-06-23 11 31 15" src="https://github.com/aesopfrom0/graba25-be/assets/72098049/b0193e44-85ee-4564-a30f-210888b7883b">
 
     
 6. src/config/ 경로에 환경변수 파일 추가 .prod.env
@@ -71,7 +54,7 @@ NOTION_API_KEY=
 TASK_TABLE_ID=
 ```
 
-7. 실행
+6. 실행
 
 ```
 npm run start:prod
