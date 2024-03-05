@@ -1,12 +1,12 @@
 export class CreateTaskBodyDto {
   title!: string;
   memo?: string;
-  actAttempts: number = 0;
-  estAttempts: number = 1;
+  actAttempts = 0;
+  estAttempts = 1;
 }
 
 export class BaseTaskDto extends CreateTaskBodyDto {
-  userId!: number;
+  userId?: number;
 }
 
 export class GetTaskDto extends BaseTaskDto {

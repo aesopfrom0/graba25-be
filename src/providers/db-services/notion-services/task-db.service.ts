@@ -47,7 +47,7 @@ export class TaskDbService extends BaseDbService {
         result.push({
           id: task.id,
           title: properties.title.title[0].plain_text,
-          userId: properties.userId.number,
+          // userId: properties.userId.number,
           memo: properties.memo?.rich_text[0]?.plain_text,
           actAttempts: properties.actAttempts.number,
           estAttempts: properties.estAttempts.number,
@@ -67,7 +67,7 @@ export class TaskDbService extends BaseDbService {
         parent: { database_id: this.#dbId },
         properties: {
           title: { title: [{ text: { content: dto.title } }] },
-          userId: { number: dto.userId },
+          // userId: { number: dto.userId },
           memo: { rich_text: [{ text: { content: dto.memo ?? '' } }] },
           actAttempts: { number: dto.actAttempts },
           estAttempts: { number: dto.estAttempts },
