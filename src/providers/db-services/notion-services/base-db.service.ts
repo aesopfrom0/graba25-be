@@ -1,6 +1,6 @@
-import { ConfigService } from "@nestjs/config";
-import { Client, LogLevel } from "@notionhq/client";
-import { BaseService } from "src/providers/base.service";
+import { ConfigService } from '@nestjs/config';
+import { Client, LogLevel } from '@notionhq/client';
+import { BaseService } from 'src/providers/base.service';
 
 export class BaseDbService extends BaseService {
   readonly config = new ConfigService();
