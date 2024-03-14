@@ -43,7 +43,6 @@ export class TaskDbService extends BaseDbService {
     const result = [] as GetTaskDto[];
     resp.forEach((task) => {
       const properties = task['properties'];
-      console.log(properties.title.title[0]);
       properties &&
         result.push({
           id: task.id,
