@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTimeLogDto, GetTimeLogDto } from 'src/tasks/dtos/time-log.dto';
-import { BaseDbService } from './base-db.service';
+import { BaseNotionDbService } from './base-notion-db.service';
 
 @Injectable()
-export class TimeLogDbService extends BaseDbService {
+export class TimeLogNotionDbService extends BaseNotionDbService {
   readonly #dbId: string;
   readonly #taskDbId: string;
 
@@ -29,7 +29,7 @@ export class TimeLogDbService extends BaseDbService {
         properties,
       });
 
-      return { ok: true, message: resp.id };
+      return { ok: true, body: resp.id };
     } catch (e) {
       this.logger.error(e);
       return { ok: false, error: JSON.stringify(e) };

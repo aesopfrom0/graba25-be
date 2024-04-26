@@ -6,12 +6,12 @@ export class CustomLogger extends Logger {
     context ? super.log(customMessage, context) : super.log(customMessage);
   }
 
-  error(message: any, trace?: string, context?: string) {
+  error(message: any, trace?: string) {
     const customMessage = `[${this.#functionName()}] ${message}`;
     super.error(customMessage, trace);
   }
 
-  debug(message: any, context?: string) {
+  debug(message: any) {
     const customMessage = `[${this.#functionName()}] ${message}`;
     super.debug(customMessage);
   }

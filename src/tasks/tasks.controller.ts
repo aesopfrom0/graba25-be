@@ -11,9 +11,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { GetTaskDto, BaseTaskDto, UpdateTaskDto } from './dtos/base-task.dto';
+import { BaseTaskDto, UpdateTaskDto } from './dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
-import { BaseTimeLogDto, CreateTimeLogDto } from './dtos/time-log.dto';
+import { CreateTimeLogDto } from './dtos/time-log.dto';
+import { TaskResponseDto, TasksResponseDto } from 'src/tasks/dtos/responses/task-response.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -22,17 +23,17 @@ export class TasksController {
   @Get()
   async getTasks(
     @Query('includeArchived', new DefaultValuePipe(false), ParseBoolPipe) includeArchived: boolean,
-  ): Promise<GetTaskDto[]> {
+  ): Promise<BaseResponseDto<TasksResponseDto>> {
     return await this.tasksService.getTasks(includeArchived);
   }
 
   @Post()
-  async createTask(@Body() taskDto: BaseTaskDto): Promise<BaseResponseDto> {
+  async createTask(@Body() taskDto: BaseTaskDto): Promise<BaseResponseDto<TaskResponseDto>> {
     return await this.tasksService.createTask(taskDto);
   }
 
   @Patch('archive')
-  async archiveTasks(@Body() archiveTasks: UpdateTaskDto[]): Promise<BaseResponseDto> {
+  async archiveTasks(@Body() archiveTasks: UpdateTaskDto[]): Promise<BaseResponseDto<string>> {
     return await this.tasksService.archiveTasks(archiveTasks);
   }
 
@@ -40,20 +41,17 @@ export class TasksController {
   async updateTask(
     @Param('id') id: string,
     @Body() taskDto: UpdateTaskDto,
-  ): Promise<BaseResponseDto> {
+  ): Promise<BaseResponseDto<string>> {
     return await this.tasksService.updateTask({ ...taskDto, id });
   }
 
   @Patch(':id/active')
-  async setCurrentTask(
-    @Param('id') id: string,
-    @Body() taskDto: UpdateTaskDto,
-  ): Promise<BaseResponseDto> {
+  async setCurrentTask(@Param('id') id: string): Promise<BaseResponseDto<string>> {
     return await this.tasksService.setCurrentTask(id);
   }
 
   @Delete(':id')
-  async deleteTask(@Param('id') id: string): Promise<BaseResponseDto> {
+  async deleteTask(@Param('id') id: string): Promise<BaseResponseDto<string>> {
     return await this.tasksService.deleteTask(id);
   }
 

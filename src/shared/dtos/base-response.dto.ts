@@ -1,5 +1,5 @@
-export class BaseResponseDto {
+export class BaseResponseDto<T> {
   ok!: boolean;
-  message?: string;
+  body?: T;
   error?: any;
 }
