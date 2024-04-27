@@ -39,12 +39,14 @@ export class Task extends Document {
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
 
-// _id 필드를 문자열로 변환하여 id라는 이름의 가상 속성을 생성
 TaskSchema.virtual('id').get(function () {
-  return this._id.toHexString();
+  return this._id.toString();
 });
 
-// 가상 속성을 JSON 형식으로 출력할 수 있게 설정
-TaskSchema.set('toJSON', {
-  virtuals: true,
-});
+// TaskSchema.set('toObject', {
+//   virtuals: true,
+// });
+
+// TaskSchema.set('toJSON', {
+//   virtuals: true,
+// });

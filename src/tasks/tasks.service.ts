@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from '../providers/base.service';
 import { TaskNotionDbService } from '../providers/databases/notion/services/task-notion-db.service';
-import { GetTaskDto, BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from './dtos/base-task.dto';
+import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from './dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
 import { CreateTimeLogDto } from './dtos/time-log.dto';
 import { TimeLogNotionDbService } from 'src/providers/databases/notion/services/time-log-notion-db.service';

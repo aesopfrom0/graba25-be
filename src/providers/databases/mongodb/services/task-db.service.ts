@@ -58,19 +58,18 @@ export class TaskDbService extends BaseService {
   async updateTask(dto: UpdateTaskMongoDbDto): Promise<BaseResponseDto<string>> {
     try {
       const task = await this.taskModel.findById(dto.id);
-      console.log(task);
       if (!task) {
         return { ok: false, error: 'Task not found' };
       }
       Object.entries(dto).forEach(([key, value]) => {
-        if (value !== undefined) {
+        if (key !== 'id' && value !== undefined) {
           task[key] = value;
         }
       });
       const resp = await task.save();
       return { ok: true, body: resp.id };
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(`[${this.updateTask.name}] Error: ${e}`);
       return { ok: false, error: JSON.stringify(e) };
     }
   }
