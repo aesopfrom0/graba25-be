@@ -159,7 +159,7 @@ export class TaskNotionDbService extends BaseNotionDbService {
     }
   }
 
-  async deleteTask(id: string) {
+  async archiveTask(id: string) {
     try {
       const resp = await this.notion.pages.update({ page_id: id, archived: true });
       return { ok: true, body: `${resp.id} deleted (actually archived)` };

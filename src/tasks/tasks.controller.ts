@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { BaseTaskDto, UpdateTaskDto } from './dtos/base-task.dto';
+import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from './dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
 import { CreateTimeLogDto } from './dtos/time-log.dto';
 import { TaskResponseDto, TasksResponseDto } from 'src/tasks/dtos/responses/task-response.dto';
@@ -33,7 +33,9 @@ export class TasksController {
   }
 
   @Patch('archive')
-  async archiveTasks(@Body() archiveTasks: UpdateTaskDto[]): Promise<BaseResponseDto<string>> {
+  async archiveTasks(
+    @Body() archiveTasks: UpdateTaskMongoDbDto[],
+  ): Promise<BaseResponseDto<string>> {
     return await this.tasksService.archiveTasks(archiveTasks);
   }
 
@@ -52,7 +54,7 @@ export class TasksController {
 
   @Delete(':id')
   async deleteTask(@Param('id') id: string): Promise<BaseResponseDto<string>> {
-    return await this.tasksService.deleteTask(id);
+    return await this.tasksService.archiveTask(id);
   }
 
   @Get(':id')

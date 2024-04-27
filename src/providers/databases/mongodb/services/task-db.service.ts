@@ -73,4 +73,28 @@ export class TaskDbService extends BaseService {
       return { ok: false, error: JSON.stringify(e) };
     }
   }
+
+  async updateTasks(tasks: UpdateTaskMongoDbDto[]): Promise<BaseResponseDto<string>> {
+    let ok = true;
+    let notUpdatedTaskIds = '';
+    try {
+      await Promise.all(
+        tasks.map(async (task) => {
+          const resp = await this.updateTask(task);
+          if (!resp.ok) {
+            ok = false;
+            notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${task.id}`);
+          }
+        }),
+      );
+      return { ok, body: `${tasks.length} tasks successfully updated` };
+    } catch (e) {
+      this.logger.error(e);
+      return { ok: false, error: 'notUpdatedTaskIds' + notUpdatedTaskIds + JSON.stringify(e) };
+    }
+  }
+
+  async archiveTask(id: string) {
+    return await this.updateTask({ id, isArchived: true });
+  }
 }
