@@ -8,5 +8,7 @@ export function validateSchema() {
     TASK_TABLE_ID: Joi.string().required(),
     MIGRATE_DB: Joi.boolean().default(false),
     MONGODB_URI: Joi.string(),
+    MONGODB_AUTO_CREATE: Joi.boolean().default(false),
+    MONGODB_AUTO_INDEX: Joi.boolean().default(false),
   });
 }

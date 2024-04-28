@@ -22,6 +22,8 @@ import { MongoDbServicesModule } from 'src/providers/databases/mongodb/mongodb-s
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
+        autoCreate: true,
+        autoIndex: true,
       }),
       inject: [ConfigService],
     }),
