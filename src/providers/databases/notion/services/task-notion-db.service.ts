@@ -4,7 +4,7 @@ import {
   BaseTaskDto,
   getCurrentTaskDto,
   UpdateTaskDto,
-} from '../../../../tasks/dtos/base-task.dto';
+} from '../../../../shared/dtos/base-task.dto';
 import { BaseResponseDto } from '../../../../shared/dtos/base-response.dto';
 import { Injectable } from '@nestjs/common';
 import { BaseNotionDbService } from './base-notion-db.service';

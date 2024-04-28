@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
 import { Task } from 'src/providers/databases/mongodb/schemas/task.schema';
 import { BaseResponseDto } from 'src/shared/dtos/base-response.dto';
-import { CreateTaskBodyDto, UpdateTaskMongoDbDto } from 'src/tasks/dtos/base-task.dto';
-import { TaskResponseDto } from 'src/tasks/dtos/responses/task-response.dto';
+import { CreateTaskBodyDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
+import { TaskResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
 export class TaskDbService extends BaseService {
   constructor(@InjectModel('Task') private readonly taskModel: mongoose.Model<Task>) {

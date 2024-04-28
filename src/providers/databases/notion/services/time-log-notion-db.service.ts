@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTimeLogDto, GetTimeLogDto } from 'src/tasks/dtos/time-log.dto';
+import { CreateTimeLogDto, GetTimeLogDto } from 'src/shared/dtos/time-log.dto';
 import { BaseNotionDbService } from './base-notion-db.service';
 
 @Injectable()
