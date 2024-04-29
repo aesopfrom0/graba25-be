@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from '../providers/base.service';
-import { TaskNotionDbService } from '../providers/databases/notion/services/task-notion-db.service';
 import { BaseTaskDto, UpdateTaskMongoDbDto } from '../shared/dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
 import { CreateTimeLogDto } from '../shared/dtos/time-log.dto';
@@ -12,7 +11,6 @@ import { isNil } from 'lodash';
 @Injectable()
 export class TasksService extends BaseService {
   constructor(
-    private readonly taskNotionDbService: TaskNotionDbService,
     private readonly timeLogDbService: TimeLogNotionDbService,
     private readonly taskDbService: TaskDbService,
   ) {
@@ -24,76 +22,23 @@ export class TasksService extends BaseService {
   }
 
   async createTask(dto: BaseTaskDto): Promise<BaseResponseDto<TaskResponseDto>> {
-    // notion db 추가
-    const notionResult = await this.taskNotionDbService.createTask(dto);
-
-    return await this.taskDbService.createTask({ ...dto, notionPageId: notionResult.body?.pageId });
+    return await this.taskDbService.createTask({ ...dto });
   }
 
   async updateTask(dto: UpdateTaskMongoDbDto): Promise<BaseResponseDto<string>> {
-    // get task from db
-    const { id, ...rest } = dto;
-    const task = (await this.taskDbService.readTask(id))?.body;
-    console.log('updateTask');
-    console.log(task);
-    if (!isNil(task?.notionPageId)) {
-      await this.taskNotionDbService.updateTask({ ...rest, pageId: task?.notionPageId });
-    }
-
     return await this.taskDbService.updateTask(dto);
   }
 
   async archiveTask(id: string): Promise<BaseResponseDto<string>> {
-    // notion db 삭제
-    const resp = await this.archiveTaskOnNotionByMongoDbId(id);
-    console.log(resp);
-
     return await this.taskDbService.archiveTask(id);
   }
 
   async archiveTasks(tasks: UpdateTaskMongoDbDto[]) {
     const tasksToBeArchived = await Promise.all(
       tasks.map(async (task) => {
-        console.log(task);
-        // notion db 삭제
-        if (task.id) {
-          const resp = await this.archiveTaskOnNotionByMongoDbId(task.id);
-          console.log(resp);
-        }
         return { ...task, isArchived: true };
       }),
     );
     return await this.taskDbService.updateTasks(tasksToBeArchived);
-  }
-
-  async getAllBlocks(id: string) {
-    return await this.taskNotionDbService.getAllBlocks(id);
-  }
-
-  async setCurrentTask(taskId: string): Promise<BaseResponseDto<string>> {
-    try {
-      const prevTask = await this.taskNotionDbService.getCurrentTask();
-      if (prevTask) {
-        await this.taskNotionDbService.updateTask({ ...prevTask, isCurrentTask: false });
-      }
-      await this.taskNotionDbService.updateTask({ pageId: taskId, isCurrentTask: true });
-      return {
-        ok: true,
-        body: 'set the current task and released the previously focused task.',
-      };
-    } catch (e) {
-      this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
-    }
-  }
-
-  async createTimeLog(dto: CreateTimeLogDto) {
-    return await this.timeLogDbService.createTimeLog(dto);
-  }
-
-  private async archiveTaskOnNotionByMongoDbId(id: string) {
-    const task = (await this.taskDbService.readTask(id))?.body;
-    console.log(task);
-    task?.notionPageId && (await this.taskNotionDbService.archiveTask(task?.notionPageId));
   }
 }

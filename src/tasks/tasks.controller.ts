@@ -13,7 +13,6 @@ import {
 import { TasksService } from './tasks.service';
 import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from '../shared/dtos/base-task.dto';
 import { BaseResponseDto } from '../shared/dtos/base-response.dto';
-import { CreateTimeLogDto } from '../shared/dtos/time-log.dto';
 import { TaskResponseDto, TasksResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
 @Controller('tasks')
@@ -47,23 +46,8 @@ export class TasksController {
     return await this.tasksService.updateTask({ ...taskDto, id });
   }
 
-  @Patch(':id/active')
-  async setCurrentTask(@Param('id') id: string): Promise<BaseResponseDto<string>> {
-    return await this.tasksService.setCurrentTask(id);
-  }
-
   @Delete(':id')
   async deleteTask(@Param('id') id: string): Promise<BaseResponseDto<string>> {
     return await this.tasksService.archiveTask(id);
-  }
-
-  @Get(':id')
-  async getTaskById(@Param('id') id: string) {
-    return await this.tasksService.getAllBlocks(id);
-  }
-
-  @Post('time-log')
-  async createTimeLog(@Body() timeLogDto: CreateTimeLogDto) {
-    return await this.tasksService.createTimeLog(timeLogDto);
   }
 }
