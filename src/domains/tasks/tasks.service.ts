@@ -1,19 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { BaseService } from '../providers/base.service';
-import { BaseTaskDto, UpdateTaskMongoDbDto } from '../shared/dtos/base-task.dto';
-import { BaseResponseDto } from '../shared/dtos/base-response.dto';
-import { CreateTimeLogDto } from '../shared/dtos/time-log.dto';
-import { TimeLogNotionDbService } from 'src/providers/databases/notion/services/time-log-notion-db.service';
-import { TaskDbService } from 'src/providers/databases/mongodb/services/task-db.service';
+import { BaseService } from '../../providers/base.service';
+import { BaseTaskDto, UpdateTaskMongoDbDto } from '../../shared/dtos/base-task.dto';
+import { BaseResponseDto } from '../../shared/dtos/base-response.dto';
+import { TaskDbService } from 'src/providers/databases/db/services/task-db.service';
 import { TaskResponseDto, TasksResponseDto } from 'src/shared/dtos/responses/task-response.dto';
-import { isNil } from 'lodash';
 
 @Injectable()
 export class TasksService extends BaseService {
-  constructor(
-    private readonly timeLogDbService: TimeLogNotionDbService,
-    private readonly taskDbService: TaskDbService,
-  ) {
+  constructor(private readonly taskDbService: TaskDbService) {
     super();
   }
 

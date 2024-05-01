@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Task } from 'src/providers/databases/mongodb/schemas/task.schema';
+import { Task } from 'src/providers/databases/db/schemas/task.schema';
 
 export class TaskResponseDto {
   constructor(task: Task) {

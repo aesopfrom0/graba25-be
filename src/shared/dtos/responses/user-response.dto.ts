@@ -1,4 +1,4 @@
-import { User } from 'src/providers/databases/mongodb/schemas/user.schema';
+import { User } from 'src/providers/databases/db/schemas/user.schema';
 
 export class UserResponseDto {
   constructor(user: User) {

@@ -11,8 +11,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from '../shared/dtos/base-task.dto';
-import { BaseResponseDto } from '../shared/dtos/base-response.dto';
+import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from '../../shared/dtos/base-task.dto';
+import { BaseResponseDto } from '../../shared/dtos/base-response.dto';
 import { TaskResponseDto, TasksResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
 @Controller('tasks')

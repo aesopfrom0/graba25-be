@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
-import { User } from 'src/providers/databases/mongodb/schemas/user.schema';
+import { User } from 'src/providers/databases/db/schemas/user.schema';
 import { BaseResponseDto } from 'src/shared/dtos/base-response.dto';
 import { CreateUserBodyDto, UpdateUserBodyDto } from 'src/shared/dtos/requests/user-request.dto';
 import { UserResponseDto } from 'src/shared/dtos/responses/user-response.dto';

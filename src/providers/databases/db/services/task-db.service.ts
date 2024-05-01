@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
-import { Task } from 'src/providers/databases/mongodb/schemas/task.schema';
+import { Task } from 'src/providers/databases/db/schemas/task.schema';
 import { BaseResponseDto } from 'src/shared/dtos/base-response.dto';
 import { CreateTaskBodyDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
 import { TaskResponseDto } from 'src/shared/dtos/responses/task-response.dto';

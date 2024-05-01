@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateSchema } from './config/validate-schema';
-import { TasksModule } from './tasks/tasks.module';
+import { TasksModule } from './domains/tasks/tasks.module';
 import { NotionDbServicesModule } from './providers/databases/notion/notion-db-services.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MongoDbServicesModule } from 'src/providers/databases/mongodb/mongodb-services.module';
+import { DbServicesModule } from 'src/providers/databases/db/db-services.module';
+import { ProjectsModule } from './domains/projects/projects.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { MongoDbServicesModule } from 'src/providers/databases/mongodb/mongodb-s
     }),
     TasksModule,
     NotionDbServicesModule,
-    MongoDbServicesModule,
+    DbServicesModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
