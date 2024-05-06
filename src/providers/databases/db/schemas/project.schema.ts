@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+import { Task } from '@graba25-be/providers/databases/db/schemas/task.schema';
+import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Project extends Document {
@@ -18,11 +20,17 @@ export class Project extends Document {
   @Prop({ required: true, type: Date })
   dueDate!: Date;
 
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }] })
+  tasks!: Task[];
+
   @Prop({ default: new Date() })
   createdAt!: Date;
 
   @Prop({ default: new Date() })
   updatedAt!: Date;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  user!: User;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

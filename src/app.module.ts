@@ -8,6 +8,7 @@ import { NotionDbServicesModule } from './providers/databases/notion/notion-db-s
 import { MongooseModule } from '@nestjs/mongoose';
 import { DbServicesModule } from 'src/providers/databases/db/db-services.module';
 import { ProjectsModule } from './domains/projects/projects.module';
+import { UsersModule } from './domains/users/users.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ProjectsModule } from './domains/projects/projects.module';
     NotionDbServicesModule,
     DbServicesModule,
     ProjectsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

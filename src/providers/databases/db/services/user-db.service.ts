@@ -1,10 +1,13 @@
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { BaseService } from 'src/providers/base.service';
-import { User } from 'src/providers/databases/db/schemas/user.schema';
-import { BaseResponseDto } from 'src/shared/dtos/base-response.dto';
-import { CreateUserBodyDto, UpdateUserBodyDto } from 'src/shared/dtos/requests/user-request.dto';
-import { UserResponseDto } from 'src/shared/dtos/responses/user-response.dto';
+import { BaseService } from '@graba25-be/providers/base.service';
+import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
+import { BaseResponseDto } from '@graba25-be/shared/dtos/base-response.dto';
+import {
+  CreateUserBodyDto,
+  UpdateUserBodyDto,
+} from '@graba25-be/shared/dtos/requests/user-request.dto';
+import { UserResponseDto } from '@graba25-be/shared/dtos/responses/user-response.dto';
 
 export class UserDbService extends BaseService {
   constructor(@InjectModel('User') private readonly userModel: mongoose.Model<User>) {
@@ -37,6 +40,10 @@ export class UserDbService extends BaseService {
       this.logger.error(e);
       return { ok: false, error: JSON.stringify(e) };
     }
+  }
+
+  async readUserByEmail(email: string): Promise<User | null> {
+    return await this.userModel.findOne({ email });
   }
 
   async updateUser(id: string, dto: UpdateUserBodyDto): Promise<BaseResponseDto<string>> {

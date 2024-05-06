@@ -11,9 +11,16 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from '../../shared/dtos/base-task.dto';
+import {
+  CreateTaskBodyDto,
+  UpdateTaskDto,
+  UpdateTaskMongoDbDto,
+} from '../../shared/dtos/base-task.dto';
 import { BaseResponseDto } from '../../shared/dtos/base-response.dto';
-import { TaskResponseDto, TasksResponseDto } from 'src/shared/dtos/responses/task-response.dto';
+import {
+  TaskResponseDto,
+  TasksResponseDto,
+} from '@graba25-be/shared/dtos/responses/task-response.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -27,8 +34,8 @@ export class TasksController {
   }
 
   @Post()
-  async createTask(@Body() taskDto: BaseTaskDto): Promise<BaseResponseDto<TaskResponseDto>> {
-    return await this.tasksService.createTask(taskDto);
+  async createTask(@Body() taskDto: CreateTaskBodyDto): Promise<BaseResponseDto<TaskResponseDto>> {
+    return await this.tasksService.createTask({ ...taskDto, user: '66390a778018**********' }); // todo: 유저 id 데코레이터 적용
   }
 
   @Patch('archive')

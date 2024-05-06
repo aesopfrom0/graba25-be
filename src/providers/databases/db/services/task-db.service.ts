@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
 import { Task } from 'src/providers/databases/db/schemas/task.schema';
 import { BaseResponseDto } from 'src/shared/dtos/base-response.dto';
-import { CreateTaskBodyDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
+import { BaseTaskDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
 import { TaskResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
 export class TaskDbService extends BaseService {
@@ -11,15 +11,9 @@ export class TaskDbService extends BaseService {
     super();
   }
 
-  async createTask(dto: CreateTaskBodyDto): Promise<BaseResponseDto<TaskResponseDto>> {
+  async createTask(dto: BaseTaskDto): Promise<BaseResponseDto<TaskResponseDto>> {
     try {
-      const task = new this.taskModel({
-        title: dto.title,
-        memo: dto.memo ?? '',
-        actAttempts: dto.actAttempts,
-        estAttempts: dto.estAttempts,
-        notionPageId: dto.notionPageId,
-      });
+      const task = new this.taskModel(dto);
       const resp = await task.save();
       return { ok: true, body: new TaskResponseDto(resp) };
     } catch (e) {

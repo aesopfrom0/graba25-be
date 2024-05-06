@@ -16,7 +16,7 @@ export class TasksService extends BaseService {
   }
 
   async createTask(dto: BaseTaskDto): Promise<BaseResponseDto<TaskResponseDto>> {
-    return await this.taskDbService.createTask({ ...dto });
+    return await this.taskDbService.createTask(dto);
   }
 
   async updateTask(dto: UpdateTaskMongoDbDto): Promise<BaseResponseDto<string>> {

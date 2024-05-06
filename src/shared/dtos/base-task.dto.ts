@@ -7,7 +7,7 @@ export class CreateTaskBodyDto {
 }
 
 export class BaseTaskDto extends CreateTaskBodyDto {
-  userId?: number;
+  user?: string;
 }
 
 export class GetTaskDto extends BaseTaskDto {
