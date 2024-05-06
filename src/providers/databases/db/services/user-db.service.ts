@@ -2,19 +2,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseService } from '@graba25-be/providers/base.service';
 import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
-import { BaseResponseDto } from '@graba25-be/shared/dtos/base-response.dto';
 import {
   CreateUserBodyDto,
   UpdateUserBodyDto,
 } from '@graba25-be/shared/dtos/requests/user-request.dto';
 import { UserResponseDto } from '@graba25-be/shared/dtos/responses/user-response.dto';
+import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
+import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 export class UserDbService extends BaseService {
   constructor(@InjectModel('User') private readonly userModel: mongoose.Model<User>) {
     super();
   }
 
-  async createUser(dto: CreateUserBodyDto): Promise<BaseResponseDto<UserResponseDto>> {
+  async createUser(dto: CreateUserBodyDto): Promise<UserResponseDto> {
     try {
       const user = new this.userModel({
         name: dto.name,
@@ -22,35 +24,48 @@ export class UserDbService extends BaseService {
         password: dto.password,
       });
       const resp = await user.save();
-      return { ok: true, body: new UserResponseDto(resp) };
+      return new UserResponseDto(resp);
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(UserDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async readUser(id: string): Promise<BaseResponseDto<UserResponseDto>> {
+  async readUser(id: string): Promise<UserResponseDto> {
     try {
       const user = await this.userModel.findById(id);
       if (!user) {
-        return { ok: false, error: 'User not found' };
+        throw new ApplicationException(
+          new BadRequestException('User not found'),
+          ErrorCode.USER_NOT_EXISTS,
+        );
       }
-      return { ok: true, body: new UserResponseDto(user) };
+      return new UserResponseDto(user);
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(UserDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async readUserByEmail(email: string): Promise<User | null> {
-    return await this.userModel.findOne({ email });
+  async readUserByEmail(email: string): Promise<UserResponseDto | null> {
+    const user = await this.userModel.findOne({ email });
+    return user ? new UserResponseDto(user) : null;
   }
 
-  async updateUser(id: string, dto: UpdateUserBodyDto): Promise<BaseResponseDto<string>> {
+  async updateUser(id: string, dto: UpdateUserBodyDto): Promise<string> {
     try {
       const user = await this.userModel.findById(id);
       if (!user) {
-        return { ok: false, error: 'User not found' };
+        throw new ApplicationException(
+          new BadRequestException('User not found'),
+          ErrorCode.USER_NOT_EXISTS,
+        );
       }
       Object.entries(dto).forEach(([key, value]) => {
         if (key !== 'id' && value !== undefined) {
@@ -58,10 +73,13 @@ export class UserDbService extends BaseService {
         }
       });
       await user.save();
-      return { ok: true, body: id };
+      return id;
     } catch (e) {
       this.logger.error(`[${this.updateUser.name}] Error: ${e}`);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(UserDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 }

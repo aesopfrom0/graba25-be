@@ -9,6 +9,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DbServicesModule } from 'src/providers/databases/db/db-services.module';
 import { ProjectsModule } from './domains/projects/projects.module';
 import { UsersModule } from './domains/users/users.module';
+import { ShutdownModule } from '@graba25-be/providers/shutdown/shutdown.module';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from '@graba25-be/shared/filters/all-exception.filter';
 
 @Module({
   imports: [
@@ -34,8 +37,15 @@ import { UsersModule } from './domains/users/users.module';
     DbServicesModule,
     ProjectsModule,
     UsersModule,
+    ShutdownModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}

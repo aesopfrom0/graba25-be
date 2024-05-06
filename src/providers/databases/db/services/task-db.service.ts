@@ -1,8 +1,10 @@
+import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
+import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
 import { Task } from 'src/providers/databases/db/schemas/task.schema';
-import { BaseResponseDto } from 'src/shared/dtos/base-response.dto';
 import { BaseTaskDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
 import { TaskResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
@@ -11,49 +13,62 @@ export class TaskDbService extends BaseService {
     super();
   }
 
-  async createTask(dto: BaseTaskDto): Promise<BaseResponseDto<TaskResponseDto>> {
+  async createTask(dto: BaseTaskDto): Promise<TaskResponseDto> {
     try {
       const task = new this.taskModel(dto);
       const resp = await task.save();
-      return { ok: true, body: new TaskResponseDto(resp) };
+      return new TaskResponseDto(resp);
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async readTask(id: string): Promise<BaseResponseDto<TaskResponseDto>> {
+  async readTask(id: string): Promise<TaskResponseDto> {
     try {
       const task = await this.taskModel.findById(id);
       if (!task) {
-        return { ok: false, error: 'Task not found' };
+        throw new ApplicationException(
+          new BadRequestException('Task not found'),
+          ErrorCode.TASK_NOT_FOUND,
+        );
       }
-      return { ok: true, body: new TaskResponseDto(task) };
+      return new TaskResponseDto(task);
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async readTasks(
-    includeArchived: boolean,
-  ): Promise<BaseResponseDto<{ count: number; rows: TaskResponseDto[] }>> {
+  async readTasks(includeArchived: boolean): Promise<{ count: number; rows: TaskResponseDto[] }> {
     try {
       const filter = includeArchived ? {} : { isArchived: false };
       const tasks = (await this.taskModel.find(filter)).map((task) => new TaskResponseDto(task));
       const count = await this.taskModel.countDocuments();
-      return { ok: true, body: { count, rows: tasks } };
+      return { count, rows: tasks };
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async updateTask(dto: UpdateTaskMongoDbDto): Promise<BaseResponseDto<string>> {
+  async updateTask(dto: UpdateTaskMongoDbDto): Promise<string> {
     try {
       const task = await this.taskModel.findById(dto.id);
       if (!task) {
-        return { ok: false, error: 'Task not found' };
+        throw new ApplicationException(
+          new BadRequestException('Task not found'),
+          ErrorCode.TASK_NOT_FOUND,
+        );
       }
       Object.entries(dto).forEach(([key, value]) => {
         if (key !== 'id' && value !== undefined) {
@@ -61,30 +76,34 @@ export class TaskDbService extends BaseService {
         }
       });
       const resp = await task.save();
-      return { ok: true, body: resp.id };
+      return resp.id;
     } catch (e) {
-      this.logger.error(`[${this.updateTask.name}] Error: ${e}`);
-      return { ok: false, error: JSON.stringify(e) };
+      this.logger.error(e);
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async updateTasks(tasks: UpdateTaskMongoDbDto[]): Promise<BaseResponseDto<string>> {
-    let ok = true;
+  async updateTasks(tasks: UpdateTaskMongoDbDto[]): Promise<string> {
     let notUpdatedTaskIds = '';
     try {
       await Promise.all(
         tasks.map(async (task) => {
           const resp = await this.updateTask(task);
-          if (!resp.ok) {
-            ok = false;
+          if (!resp) {
             notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${task.id}`);
           }
         }),
       );
-      return { ok, body: `${tasks.length} tasks successfully updated` };
+      return `${tasks.length} tasks successfully updated`;
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: 'notUpdatedTaskIds' + notUpdatedTaskIds + JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 

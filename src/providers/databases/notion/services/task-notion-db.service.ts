@@ -5,10 +5,12 @@ import {
   getCurrentTaskDto,
   UpdateTaskDto,
 } from '../../../../shared/dtos/base-task.dto';
-import { BaseResponseDto } from '../../../../shared/dtos/base-response.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { BaseNotionDbService } from './base-notion-db.service';
 import { isNil } from 'lodash';
+import { UserDbService } from '@graba25-be/providers/databases/db/services/user-db.service';
+import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
+import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
 
 @Injectable()
 export class TaskNotionDbService extends BaseNotionDbService {
@@ -61,7 +63,7 @@ export class TaskNotionDbService extends BaseNotionDbService {
     return result;
   }
 
-  async createTask(dto: BaseTaskDto): Promise<BaseResponseDto<{ pageId: string }>> {
+  async createTask(dto: BaseTaskDto): Promise<{ pageId: string }> {
     try {
       const resp = await this.notion.pages.create({
         parent: { database_id: this.#dbId },
@@ -73,37 +75,41 @@ export class TaskNotionDbService extends BaseNotionDbService {
           estAttempts: { number: dto.estAttempts },
         },
       });
-      return { ok: true, body: { pageId: resp.id } };
+      return { pageId: resp.id };
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async updateTasks(tasks: UpdateTaskDto[]): Promise<BaseResponseDto<string>> {
-    let ok = true;
+  async updateTasks(tasks: UpdateTaskDto[]): Promise<string> {
     let notUpdatedTaskIds = '';
     try {
       await Promise.all(
         tasks.map(async (task) => {
           const resp = await this.updateTask(task);
-          if (!resp.ok) {
-            ok = false;
+          if (!resp) {
             notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${task.pageId}`);
           }
         }),
       );
-      return { ok, body: `${tasks.length} tasks successfully updated` };
+      return `${tasks.length} tasks successfully updated`;
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: 'notUpdatedTaskIds' + notUpdatedTaskIds + JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async updateTask(dto: UpdateTaskDto): Promise<BaseResponseDto<string>> {
+  async updateTask(dto: UpdateTaskDto): Promise<string> {
     try {
       if (!dto.pageId) {
-        return { ok: false, error: 'pageId is required' };
+        throw new Error('pageId is required');
       }
       const { title, memo, actAttempts, estAttempts, isFinished, isArchived, isCurrentTask } = dto;
       const updatedFields = {};
@@ -152,10 +158,13 @@ export class TaskNotionDbService extends BaseNotionDbService {
         page_id: dto.pageId,
         properties: updatedFields,
       });
-      return { ok: true, body: `${resp.id} updated` };
+      return `${resp.id} updated`;
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
@@ -165,7 +174,10 @@ export class TaskNotionDbService extends BaseNotionDbService {
       return { ok: true, body: `${resp.id} deleted (actually archived)` };
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
@@ -216,7 +228,10 @@ export class TaskNotionDbService extends BaseNotionDbService {
       return resp.results;
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 }

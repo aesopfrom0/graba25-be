@@ -16,7 +16,6 @@ import {
   UpdateTaskDto,
   UpdateTaskMongoDbDto,
 } from '../../shared/dtos/base-task.dto';
-import { BaseResponseDto } from '../../shared/dtos/base-response.dto';
 import {
   TaskResponseDto,
   TasksResponseDto,
@@ -29,32 +28,29 @@ export class TasksController {
   @Get()
   async getTasks(
     @Query('includeArchived', new DefaultValuePipe(false), ParseBoolPipe) includeArchived: boolean,
-  ): Promise<BaseResponseDto<TasksResponseDto>> {
+  ): Promise<TasksResponseDto> {
+    console.log(await this.tasksService.getTasks(includeArchived));
     return await this.tasksService.getTasks(includeArchived);
   }
 
   @Post()
-  async createTask(@Body() taskDto: CreateTaskBodyDto): Promise<BaseResponseDto<TaskResponseDto>> {
-    return await this.tasksService.createTask({ ...taskDto, user: '66390a778018**********' }); // todo: 유저 id 데코레이터 적용
+  async createTask(@Body() taskDto: CreateTaskBodyDto): Promise<TaskResponseDto> {
+    console.log(taskDto);
+    return await this.tasksService.createTask({ ...taskDto, user: '66390a7780187ab746aaccd6' }); // todo: 유저 id 데코레이터 적용
   }
 
   @Patch('archive')
-  async archiveTasks(
-    @Body() archiveTasks: UpdateTaskMongoDbDto[],
-  ): Promise<BaseResponseDto<string>> {
+  async archiveTasks(@Body() archiveTasks: UpdateTaskMongoDbDto[]): Promise<string> {
     return await this.tasksService.archiveTasks(archiveTasks);
   }
 
   @Patch(':id')
-  async updateTask(
-    @Param('id') id: string,
-    @Body() taskDto: UpdateTaskDto,
-  ): Promise<BaseResponseDto<string>> {
+  async updateTask(@Param('id') id: string, @Body() taskDto: UpdateTaskDto): Promise<string> {
     return await this.tasksService.updateTask({ ...taskDto, id });
   }
 
   @Delete(':id')
-  async deleteTask(@Param('id') id: string): Promise<BaseResponseDto<string>> {
+  async deleteTask(@Param('id') id: string): Promise<string> {
     return await this.tasksService.archiveTask(id);
   }
 }

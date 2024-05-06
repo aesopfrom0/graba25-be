@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from '../../providers/base.service';
 import { BaseTaskDto, UpdateTaskMongoDbDto } from '../../shared/dtos/base-task.dto';
-import { BaseResponseDto } from '../../shared/dtos/base-response.dto';
 import { TaskDbService } from 'src/providers/databases/db/services/task-db.service';
 import { TaskResponseDto, TasksResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
@@ -11,19 +10,19 @@ export class TasksService extends BaseService {
     super();
   }
 
-  async getTasks(includeArchived: boolean): Promise<BaseResponseDto<TasksResponseDto>> {
+  async getTasks(includeArchived: boolean): Promise<TasksResponseDto> {
     return await this.taskDbService.readTasks(includeArchived);
   }
 
-  async createTask(dto: BaseTaskDto): Promise<BaseResponseDto<TaskResponseDto>> {
+  async createTask(dto: BaseTaskDto): Promise<TaskResponseDto> {
     return await this.taskDbService.createTask(dto);
   }
 
-  async updateTask(dto: UpdateTaskMongoDbDto): Promise<BaseResponseDto<string>> {
+  async updateTask(dto: UpdateTaskMongoDbDto): Promise<string> {
     return await this.taskDbService.updateTask(dto);
   }
 
-  async archiveTask(id: string): Promise<BaseResponseDto<string>> {
+  async archiveTask(id: string): Promise<string> {
     return await this.taskDbService.archiveTask(id);
   }
 
