@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from '../../providers/base.service';
-import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from '../../shared/dtos/base-task.dto';
+import { BaseTaskDto, UpdateTaskDto } from '../../shared/dtos/base-task.dto';
 import { TaskDbService } from 'src/providers/databases/db/services/task-db.service';
 import { TaskResponseDto, TasksResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
@@ -30,12 +30,9 @@ export class TasksService extends BaseService {
     return await this.taskDbService.archiveTask(id);
   }
 
-  async archiveTasks(tasks: UpdateTaskMongoDbDto[]) {
-    const tasksToBeArchived = await Promise.all(
-      tasks.map(async (task) => {
-        return { ...task, isArchived: true };
-      }),
-    );
-    return await this.taskDbService.updateTasks(tasksToBeArchived);
+  async archiveTasks(taskIds: string[]): Promise<string> {
+    this.logger.debug(`[${this.archiveTasks.name}] Archiving tasks: ${taskIds.toString()}`);
+
+    return await this.taskDbService.updateTasks(taskIds, { isArchived: true });
   }
 }

@@ -29,13 +29,6 @@ export class UpdateTaskDto {
   pageId?: string;
 }
 
-export class UpdateTaskMongoDbDto extends UpdateTaskDto {
-  constructor() {
-    super();
-  }
-  id!: string;
-}
-
 export class getCurrentTaskDto {
   id!: string;
   isCurrentTask!: string;

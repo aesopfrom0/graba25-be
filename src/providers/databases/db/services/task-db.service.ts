@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
 import { Task } from 'src/providers/databases/db/schemas/task.schema';
-import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
+import { BaseTaskDto, UpdateTaskDto } from 'src/shared/dtos/base-task.dto';
 import { TaskResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
 export class TaskDbService extends BaseService {
@@ -80,19 +80,12 @@ export class TaskDbService extends BaseService {
     }
   }
 
-  async updateTasks(tasks: UpdateTaskMongoDbDto[]): Promise<string> {
-    let notUpdatedTaskIds = '';
+  async updateTasks(taskIds: string[], dto: UpdateTaskDto): Promise<string> {
     try {
-      await Promise.all(
-        tasks.map(async (task) => {
-          const { id, ...rest } = task;
-          const resp = await this.updateTask(id, rest);
-          if (!resp) {
-            notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${id}`);
-          }
-        }),
-      );
-      return `${tasks.length} tasks successfully updated`;
+      const result = await this.taskModel.updateMany({ _id: { $in: taskIds } }, dto);
+      console.log(result);
+      const { modifiedCount, matchedCount } = result;
+      return `${modifiedCount}/${matchedCount} tasks updated`;
     } catch (e) {
       this.logger.error(e);
       throw new ApplicationException(

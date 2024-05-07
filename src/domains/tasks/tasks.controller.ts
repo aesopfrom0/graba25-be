@@ -11,11 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import {
-  CreateTaskBodyDto,
-  UpdateTaskDto,
-  UpdateTaskMongoDbDto,
-} from '../../shared/dtos/base-task.dto';
+import { CreateTaskBodyDto, UpdateTaskDto } from '../../shared/dtos/base-task.dto';
 import {
   TaskResponseDto,
   TasksResponseDto,
@@ -43,8 +39,8 @@ export class TasksController {
   }
 
   @Patch('archive')
-  async archiveTasks(@Body() archiveTasks: UpdateTaskMongoDbDto[]): Promise<string> {
-    return await this.tasksService.archiveTasks(archiveTasks);
+  async archiveTasks(@Body('taskIds') taskIds: string[]): Promise<string> {
+    return await this.tasksService.archiveTasks(taskIds);
   }
 
   @Patch(':id')
