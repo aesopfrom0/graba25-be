@@ -1,6 +1,6 @@
 import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
 import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
-import { BadRequestException, InternalServerErrorException, Res } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';

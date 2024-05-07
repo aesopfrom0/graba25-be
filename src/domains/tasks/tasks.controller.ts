@@ -33,6 +33,11 @@ export class TasksController {
     return await this.tasksService.getTasks(includeArchived);
   }
 
+  @Get(':id')
+  async getTask(@Param('id') id: string): Promise<TaskResponseDto> {
+    return await this.tasksService.task(id);
+  }
+
   @Post()
   async createTask(@Body() taskDto: CreateTaskBodyDto): Promise<TaskResponseDto> {
     console.log(taskDto);
@@ -53,7 +58,7 @@ export class TasksController {
   }
 
   @Delete(':id')
-  async deleteTask(@Param('id') id: string): Promise<string> {
+  async deleteTask(@Param('id') id: string): Promise<TaskResponseDto> {
     return await this.tasksService.archiveTask(id);
   }
 }

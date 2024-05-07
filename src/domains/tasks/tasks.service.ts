@@ -14,6 +14,10 @@ export class TasksService extends BaseService {
     return await this.taskDbService.readTasks(includeArchived);
   }
 
+  async task(id: string): Promise<TaskResponseDto> {
+    return await this.taskDbService.readTask(id);
+  }
+
   async createTask(dto: BaseTaskDto): Promise<TaskResponseDto> {
     return await this.taskDbService.createTask(dto);
   }

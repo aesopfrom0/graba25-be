@@ -8,7 +8,6 @@ import {
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { BaseNotionDbService } from './base-notion-db.service';
 import { isNil } from 'lodash';
-import { UserDbService } from '@graba25-be/providers/databases/db/services/user-db.service';
 import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
 import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
 
@@ -111,7 +110,7 @@ export class TaskNotionDbService extends BaseNotionDbService {
       if (!dto.pageId) {
         throw new Error('pageId is required');
       }
-      const { title, memo, actAttempts, estAttempts, isFinished, isArchived, isCurrentTask } = dto;
+      const { title, memo, actAttempts, estAttempts, isFinished, isArchived } = dto;
       const updatedFields = {};
       !isNil(title) &&
         (updatedFields['title'] = {
@@ -148,10 +147,6 @@ export class TaskNotionDbService extends BaseNotionDbService {
       !isNil(isArchived) &&
         (updatedFields['isArchived'] = {
           checkbox: isArchived,
-        });
-      !isNil(isCurrentTask) &&
-        (updatedFields['isCurrentTask'] = {
-          checkbox: isCurrentTask,
         });
 
       const resp = await this.notion.pages.update({
