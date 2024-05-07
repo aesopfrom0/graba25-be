@@ -6,7 +6,7 @@ import {
 } from '@graba25-be/shared/dtos/requests/time-log-request.dto';
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 
-@Controller('time-log')
+@Controller('time-logs')
 export class TimeLogController {
   constructor(private readonly timeLogService: TimeLogService) {}
 
