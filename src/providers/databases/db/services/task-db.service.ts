@@ -50,7 +50,7 @@ export class TaskDbService extends BaseService {
     try {
       const filter = includeArchived ? {} : { isArchived: false };
       const tasks = (await this.taskModel.find(filter)).map((task) => new TaskResponseDto(task));
-      const count = await this.taskModel.countDocuments();
+      const count = await this.taskModel.countDocuments(filter);
       return { count, rows: tasks };
     } catch (e) {
       this.logger.error(e);
