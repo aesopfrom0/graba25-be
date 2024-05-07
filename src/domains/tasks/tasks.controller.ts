@@ -29,7 +29,6 @@ export class TasksController {
   async getTasks(
     @Query('includeArchived', new DefaultValuePipe(false), ParseBoolPipe) includeArchived: boolean,
   ): Promise<TasksResponseDto> {
-    console.log(await this.tasksService.getTasks(includeArchived));
     return await this.tasksService.getTasks(includeArchived);
   }
 
@@ -40,7 +39,6 @@ export class TasksController {
 
   @Post()
   async createTask(@Body() taskDto: CreateTaskBodyDto): Promise<TaskResponseDto> {
-    console.log(taskDto);
     return await this.tasksService.createTask({ ...taskDto, user: '66390a7780187ab746aaccd6' }); // todo: 유저 id 데코레이터 적용
   }
 

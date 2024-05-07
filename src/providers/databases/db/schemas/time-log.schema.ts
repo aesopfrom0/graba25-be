@@ -5,7 +5,12 @@ import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Interval {
-  @Prop({ required: true, type: Date })
+  constructor(start: Date, end?: Date) {
+    this.start = start;
+    this.end = end;
+  }
+
+  @Prop({ required: true, type: Date, default: new Date() })
   start!: Date;
 
   @Prop({ required: false, type: Date })
@@ -14,10 +19,14 @@ export class Interval {
 
 export const IntervalSchema = SchemaFactory.createForClass(Interval);
 
+IntervalSchema.virtual('id').get(function () {
+  return this._id.toString();
+});
+
 @Schema({ timestamps: true })
 export class TimeLog extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userId!: User;
+  user!: User;
 
   @Prop({ default: false })
   isFinished!: boolean;
@@ -34,8 +43,8 @@ export class TimeLog extends Document {
   @Prop({ default: new Date() })
   updatedAt!: Date;
 
-  @Prop({ type: [IntervalSchema], default: [] })
-  intervals?: Interval[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Interval', default: [] }] })
+  intervals!: Interval[];
 }
 
 export const TimeLogSchema = SchemaFactory.createForClass(TimeLog);

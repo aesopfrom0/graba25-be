@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TaskNotionDbService } from './services/task-notion-db.service';
-import { TimeLogNotionDbService } from './services/time-log-notion-db.service';
 
 @Module({
-  providers: [TaskNotionDbService, TimeLogNotionDbService],
-  exports: [TaskNotionDbService, TimeLogNotionDbService],
+  providers: [TaskNotionDbService],
+  exports: [TaskNotionDbService],
 })
 export class NotionDbServicesModule {}

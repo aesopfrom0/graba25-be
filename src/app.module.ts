@@ -12,6 +12,7 @@ import { UsersModule } from './domains/users/users.module';
 import { ShutdownModule } from '@graba25-be/providers/shutdown/shutdown.module';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from '@graba25-be/shared/filters/all-exception.filter';
+import { TimeLogModule } from './domains/time-log/time-log.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AllExceptionsFilter } from '@graba25-be/shared/filters/all-exception.fi
     ProjectsModule,
     UsersModule,
     ShutdownModule,
+    TimeLogModule,
   ],
   controllers: [AppController],
   providers: [
