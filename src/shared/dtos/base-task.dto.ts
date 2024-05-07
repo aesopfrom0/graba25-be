@@ -26,7 +26,6 @@ export class UpdateTaskDto {
   isArchived?: boolean;
   actAttempts?: number;
   estAttempts?: number;
-  isCurrentTask?: boolean;
   pageId?: string;
 }
 

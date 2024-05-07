@@ -1,11 +1,11 @@
 import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
 import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
 import { Task } from 'src/providers/databases/db/schemas/task.schema';
-import { BaseTaskDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
+import { BaseTaskDto, UpdateTaskDto, UpdateTaskMongoDbDto } from 'src/shared/dtos/base-task.dto';
 import { TaskResponseDto } from 'src/shared/dtos/responses/task-response.dto';
 
 export class TaskDbService extends BaseService {
@@ -61,22 +61,16 @@ export class TaskDbService extends BaseService {
     }
   }
 
-  async updateTask(dto: UpdateTaskMongoDbDto): Promise<string> {
+  async updateTask(id: string, dto: UpdateTaskDto): Promise<TaskResponseDto> {
     try {
-      const task = await this.taskModel.findById(dto.id);
+      const task = await this.taskModel.findByIdAndUpdate(id, dto, { new: true });
       if (!task) {
         throw new ApplicationException(
           new BadRequestException('Task not found'),
           ErrorCode.TASK_NOT_FOUND,
         );
       }
-      Object.entries(dto).forEach(([key, value]) => {
-        if (key !== 'id' && value !== undefined) {
-          task[key] = value;
-        }
-      });
-      const resp = await task.save();
-      return resp.id;
+      return new TaskResponseDto(task);
     } catch (e) {
       this.logger.error(e);
       throw new ApplicationException(
@@ -91,9 +85,10 @@ export class TaskDbService extends BaseService {
     try {
       await Promise.all(
         tasks.map(async (task) => {
-          const resp = await this.updateTask(task);
+          const { id, ...rest } = task;
+          const resp = await this.updateTask(id, rest);
           if (!resp) {
-            notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${task.id}`);
+            notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${id}`);
           }
         }),
       );
@@ -107,7 +102,7 @@ export class TaskDbService extends BaseService {
     }
   }
 
-  async archiveTask(id: string) {
-    return await this.updateTask({ id, isArchived: true });
+  async archiveTask(id: string): Promise<TaskResponseDto> {
+    return await this.updateTask(id, { isArchived: true });
   }
 }
