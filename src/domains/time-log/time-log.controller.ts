@@ -20,6 +20,11 @@ export class TimeLogController {
     return await this.timeLogService.timeLog(id);
   }
 
+  @Patch(':id/finish')
+  async finishTimeLog(@Param('id') id: string) {
+    return await this.timeLogService.finishTimeLog(id);
+  }
+
   @Get('intervals/:id')
   async getInterval(@Param('id') id: string) {
     return await this.timeLogService.interval(id);

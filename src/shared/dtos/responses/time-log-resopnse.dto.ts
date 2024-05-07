@@ -3,10 +3,12 @@ import { TaskResponseDto } from '@graba25-be/shared/dtos/responses/task-response
 import { ValidateNested } from 'class-validator';
 
 export class IntervalResponseDto {
-  constructor(interval: Interval) {
+  constructor(interval: any) {
+    this.id = interval.id;
     this.start = interval.start;
     this.end = interval.end;
   }
+  id!: string;
   start: Date;
   end?: Date;
 }

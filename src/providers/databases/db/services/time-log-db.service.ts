@@ -66,9 +66,7 @@ export class TimeLogDbService extends BaseService {
 
   async updateTimeLog(id: string, dto: UpdateTimeLogRequestDto): Promise<TimeLogResponseDto> {
     try {
-      const updatedTimeLog = await this.timeLogModel
-        .findByIdAndUpdate(id, dto, { new: true })
-        .populate('task');
+      const updatedTimeLog = await this.timeLogModel.findByIdAndUpdate(id, dto, { new: true });
       if (!updatedTimeLog) {
         throw new ApplicationException(
           new BadRequestException('Time log not found'),

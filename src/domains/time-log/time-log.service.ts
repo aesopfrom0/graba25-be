@@ -5,6 +5,7 @@ import {
   EndIntervalRequestDto,
   StartIntervalRequestDto,
 } from '@graba25-be/shared/dtos/requests/time-log-request.dto';
+import { TimeLogResponseDto } from '@graba25-be/shared/dtos/responses/time-log-resopnse.dto';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -18,9 +19,14 @@ export class TimeLogService extends BaseService {
     return await this.timeLogDbService.createTimeLog(dto);
   }
 
-  async timeLog(id: string) {
+  async timeLog(id: string): Promise<TimeLogResponseDto> {
     this.logger.debug(`[${this.timeLog.name}] Reading time log: ${id}`);
     return await this.timeLogDbService.readTimeLog(id);
+  }
+
+  async finishTimeLog(id: string): Promise<TimeLogResponseDto> {
+    this.logger.debug(`[${this.finishTimeLog.name}] Finishing time log: ${id}`);
+    return await this.timeLogDbService.updateTimeLog(id, { isFinished: true });
   }
 
   async interval(id: string) {
