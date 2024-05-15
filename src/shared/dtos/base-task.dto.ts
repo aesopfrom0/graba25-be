@@ -3,10 +3,11 @@ export class CreateTaskBodyDto {
   memo?: string;
   actAttempts = 0;
   estAttempts = 1;
+  notionPageId?: string;
 }
 
 export class BaseTaskDto extends CreateTaskBodyDto {
-  userId?: number;
+  user?: string;
 }
 
 export class GetTaskDto extends BaseTaskDto {
@@ -19,14 +20,13 @@ export class GetTaskDto extends BaseTaskDto {
 }
 
 export class UpdateTaskDto {
-  id!: string;
   title?: string;
   memo?: string;
   isFinished?: boolean;
   isArchived?: boolean;
   actAttempts?: number;
   estAttempts?: number;
-  isCurrentTask?: boolean;
+  pageId?: string;
 }
 
 export class getCurrentTaskDto {

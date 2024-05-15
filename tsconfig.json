@@ -20,7 +20,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "typeorm": ["^typeorm$"]
+      "typeorm": ["^typeorm$"],
+      "@graba25-be/*": ["src/*"]
     }
   }
 }

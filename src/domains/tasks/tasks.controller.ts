@@ -1,0 +1,58 @@
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  Param,
+  ParseBoolPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { TasksService } from './tasks.service';
+import { CreateTaskBodyDto, UpdateTaskDto } from '../../shared/dtos/base-task.dto';
+import {
+  TaskResponseDto,
+  TasksResponseDto,
+} from '@graba25-be/shared/dtos/responses/task-response.dto';
+
+@Controller('tasks')
+export class TasksController {
+  constructor(private readonly tasksService: TasksService) {}
+
+  @Get()
+  async getTasks(
+    @Query('includeArchived', new DefaultValuePipe(false), ParseBoolPipe) includeArchived: boolean,
+  ): Promise<TasksResponseDto> {
+    return await this.tasksService.getTasks(includeArchived);
+  }
+
+  @Get(':id')
+  async getTask(@Param('id') id: string): Promise<TaskResponseDto> {
+    return await this.tasksService.task(id);
+  }
+
+  @Post()
+  async createTask(@Body() taskDto: CreateTaskBodyDto): Promise<TaskResponseDto> {
+    return await this.tasksService.createTask({ ...taskDto, user: '66390a7780187ab746aaccd6' }); // todo: 유저 id 데코레이터 적용
+  }
+
+  @Patch('archive')
+  async archiveTasks(@Body('taskIds') taskIds: string[]): Promise<string> {
+    return await this.tasksService.archiveTasks(taskIds);
+  }
+
+  @Patch(':id')
+  async updateTask(
+    @Param('id') id: string,
+    @Body() taskDto: UpdateTaskDto,
+  ): Promise<TaskResponseDto> {
+    return await this.tasksService.updateTask(id, taskDto);
+  }
+
+  @Delete(':id')
+  async deleteTask(@Param('id') id: string): Promise<TaskResponseDto> {
+    return await this.tasksService.archiveTask(id);
+  }
+}

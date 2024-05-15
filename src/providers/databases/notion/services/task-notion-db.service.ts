@@ -2,16 +2,17 @@ import { ConfigService } from '@nestjs/config';
 import {
   GetTaskDto,
   BaseTaskDto,
-  UpdateTaskDto,
   getCurrentTaskDto,
-} from '../../../tasks/dtos/base-task.dto';
-import { BaseResponseDto } from '../../../shared/dtos/base-response.dto';
-import { isNil } from '@nestjs/common/utils/shared.utils';
-import { Injectable } from '@nestjs/common';
-import { BaseDbService } from './base-db.service';
+  UpdateTaskDto,
+} from '../../../../shared/dtos/base-task.dto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BaseNotionDbService } from './base-notion-db.service';
+import { isNil } from 'lodash';
+import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
+import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
 
 @Injectable()
-export class TaskDbService extends BaseDbService {
+export class TaskNotionDbService extends BaseNotionDbService {
   readonly #config = new ConfigService();
   readonly #dbId: string;
 
@@ -61,7 +62,7 @@ export class TaskDbService extends BaseDbService {
     return result;
   }
 
-  async createTask(dto: BaseTaskDto): Promise<BaseResponseDto> {
+  async createTask(dto: BaseTaskDto): Promise<{ pageId: string }> {
     try {
       const resp = await this.notion.pages.create({
         parent: { database_id: this.#dbId },
@@ -73,36 +74,43 @@ export class TaskDbService extends BaseDbService {
           estAttempts: { number: dto.estAttempts },
         },
       });
-      return { ok: true, message: resp.id };
+      return { pageId: resp.id };
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async updateTasks(tasks: UpdateTaskDto[]): Promise<BaseResponseDto> {
-    let ok = true;
+  async updateTasks(tasks: UpdateTaskDto[]): Promise<string> {
     let notUpdatedTaskIds = '';
     try {
       await Promise.all(
         tasks.map(async (task) => {
           const resp = await this.updateTask(task);
-          if (!resp.ok) {
-            ok = false;
-            notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${task.id}`);
+          if (!resp) {
+            notUpdatedTaskIds = notUpdatedTaskIds.concat(`,${task.pageId}`);
           }
         }),
       );
-      return { ok, message: `${tasks.length} tasks successfully updated` };
+      return `${tasks.length} tasks successfully updated`;
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: 'notUpdatedTaskIds' + notUpdatedTaskIds + JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async updateTask(dto: UpdateTaskDto): Promise<BaseResponseDto> {
+  async updateTask(dto: UpdateTaskDto): Promise<string> {
     try {
-      const { title, memo, actAttempts, estAttempts, isFinished, isArchived, isCurrentTask } = dto;
+      if (!dto.pageId) {
+        throw new Error('pageId is required');
+      }
+      const { title, memo, actAttempts, estAttempts, isFinished, isArchived } = dto;
       const updatedFields = {};
       !isNil(title) &&
         (updatedFields['title'] = {
@@ -140,29 +148,31 @@ export class TaskDbService extends BaseDbService {
         (updatedFields['isArchived'] = {
           checkbox: isArchived,
         });
-      !isNil(isCurrentTask) &&
-        (updatedFields['isCurrentTask'] = {
-          checkbox: isCurrentTask,
-        });
 
       const resp = await this.notion.pages.update({
-        page_id: dto.id,
+        page_id: dto.pageId,
         properties: updatedFields,
       });
-      return { ok: true, message: `${resp.id} updated` };
+      return `${resp.id} updated`;
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
-  async deleteTask(id: string) {
+  async archiveTask(id: string) {
     try {
       const resp = await this.notion.pages.update({ page_id: id, archived: true });
-      return { ok: true, message: `${resp.id} deleted (actually archived)` };
+      return { ok: true, body: `${resp.id} deleted (actually archived)` };
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 
@@ -210,11 +220,13 @@ export class TaskDbService extends BaseDbService {
         block_id: pageId,
         page_size: 100,
       });
-      console.log(resp);
       return resp.results;
     } catch (e) {
       this.logger.error(e);
-      return { ok: false, error: JSON.stringify(e) };
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskNotionDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
     }
   }
 }

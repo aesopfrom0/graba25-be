@@ -6,9 +6,7 @@ module.exports = {
   plugins: [
     // ...
     new CopyWebpackPlugin({
-      patterns: [
-        // { from: 'src/config/*.yaml', to: 'config/[name].[ext]' }
-      ],
+      patterns: [{ from: 'src/config/*.yaml', to: 'config/[name].[ext]' }],
     }),
   ],
 };
