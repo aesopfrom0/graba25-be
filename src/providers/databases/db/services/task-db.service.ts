@@ -83,7 +83,6 @@ export class TaskDbService extends BaseService {
   async updateTasks(taskIds: string[], dto: UpdateTaskDto): Promise<string> {
     try {
       const result = await this.taskModel.updateMany({ _id: { $in: taskIds } }, dto);
-      console.log(result);
       const { modifiedCount, matchedCount } = result;
       return `${modifiedCount}/${matchedCount} tasks updated`;
     } catch (e) {
