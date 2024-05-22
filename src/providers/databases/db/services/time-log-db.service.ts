@@ -9,8 +9,8 @@ import {
   IntervalResponseDto,
   TimeLogResponseDto,
 } from '@graba25-be/shared/dtos/responses/time-log-resopnse.dto';
-import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
-import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
+import ApplicationException from '@graba25-be/shared/exceptions/application.exception';
+import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

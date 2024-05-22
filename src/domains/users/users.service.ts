@@ -4,8 +4,8 @@ import {
   CreateUserBodyDto,
   UpdateUserBodyDto,
 } from '@graba25-be/shared/dtos/requests/user-request.dto';
-import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
-import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
+import ApplicationException from '@graba25-be/shared/exceptions/application.exception';
+import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 
 @Injectable()
 export class UsersService {

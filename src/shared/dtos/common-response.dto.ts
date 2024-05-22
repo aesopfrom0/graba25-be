@@ -1,4 +1,4 @@
-import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
+import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 
 export class CommonResponseDto<T> {
   body?: T;

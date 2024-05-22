@@ -7,9 +7,9 @@ import {
 } from '../../../../shared/dtos/base-task.dto';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { BaseNotionDbService } from './base-notion-db.service';
+import ApplicationException from '@graba25-be/shared/exceptions/application.exception';
+import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 import { isNil } from 'lodash';
-import ApplicationException from '@graba25-be/shared/excenptions/application.exception';
-import { ErrorCode } from '@graba25-be/shared/excenptions/error-code';
 
 @Injectable()
 export class TaskNotionDbService extends BaseNotionDbService {
