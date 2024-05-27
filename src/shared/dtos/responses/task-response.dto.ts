@@ -10,7 +10,6 @@ export class TaskResponseDto {
     this.estAttempts = task.estAttempts;
     this.isFinished = task.isFinished;
     this.isArchived = task.isArchived;
-    this.isCurrentTask = task.isCurrentTask;
     this.dueDate = task.dueDate;
     this.notionPageId = task.notionPageId;
     this.createdAt = task.createdAt;
