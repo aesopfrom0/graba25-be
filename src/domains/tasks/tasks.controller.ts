@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskBodyDto, UpdateTaskDto } from '../../shared/dtos/base-task.dto';
@@ -16,16 +17,20 @@ import {
   TaskResponseDto,
   TasksResponseDto,
 } from '@graba25-be/shared/dtos/responses/task-response.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UserId } from '@graba25-be/shared/decorators/user-id.decorator';
 
 @Controller('tasks')
+@UseGuards(AuthGuard('jwt'))
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
   async getTasks(
+    @UserId() userId: string,
     @Query('includeArchived', new DefaultValuePipe(false), ParseBoolPipe) includeArchived: boolean,
   ): Promise<TasksResponseDto> {
-    return await this.tasksService.getTasks(includeArchived);
+    return await this.tasksService.getTasks(userId, includeArchived);
   }
 
   @Get(':id')
@@ -34,13 +39,19 @@ export class TasksController {
   }
 
   @Post()
-  async createTask(@Body() taskDto: CreateTaskBodyDto): Promise<TaskResponseDto> {
-    return await this.tasksService.createTask({ ...taskDto, user: '66390a7780187ab746aaccd6' }); // todo: 유저 id 데코레이터 적용
+  async createTask(
+    @UserId() userId: string,
+    @Body() taskDto: CreateTaskBodyDto,
+  ): Promise<TaskResponseDto> {
+    return await this.tasksService.createTask({ ...taskDto, user: userId });
   }
 
   @Patch('archive')
-  async archiveTasks(@Body('taskIds') taskIds: string[]): Promise<string> {
-    return await this.tasksService.archiveTasks(taskIds);
+  async archiveTasks(
+    @UserId() userId: string,
+    @Body('taskIds') taskIds: string[],
+  ): Promise<string> {
+    return await this.tasksService.archiveTasks(userId, taskIds);
   }
 
   @Patch(':id')

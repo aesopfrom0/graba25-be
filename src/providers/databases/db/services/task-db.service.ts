@@ -46,9 +46,15 @@ export class TaskDbService extends BaseService {
     }
   }
 
-  async readTasks(includeArchived: boolean): Promise<{ count: number; rows: TaskResponseDto[] }> {
+  async readTasks(
+    userId: string,
+    includeArchived: boolean,
+  ): Promise<{ count: number; rows: TaskResponseDto[] }> {
+    console.log('userId', userId);
+    console.log('readTasks');
     try {
-      const filter = includeArchived ? {} : { isArchived: false };
+      const defaultFilter = { user: userId };
+      const filter = includeArchived ? defaultFilter : { ...defaultFilter, isArchived: false };
       const tasks = (await this.taskModel.find(filter)).map((task) => new TaskResponseDto(task));
       const count = await this.taskModel.countDocuments(filter);
       return { count, rows: tasks };

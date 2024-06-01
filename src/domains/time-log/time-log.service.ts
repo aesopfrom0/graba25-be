@@ -14,9 +14,11 @@ export class TimeLogService extends BaseService {
     super();
   }
 
-  async createTimeLog(dto: CreateTimeLogRequestDto) {
-    this.logger.debug(`[${this.createTimeLog.name}] Creating time log: ${JSON.stringify(dto)}`);
-    return await this.timeLogDbService.createTimeLog(dto);
+  async createTimeLog(userId: string, dto: CreateTimeLogRequestDto) {
+    this.logger.debug(
+      `[${this.createTimeLog.name}] userId: ${userId}, Creating time log: ${JSON.stringify(dto)}`,
+    );
+    return await this.timeLogDbService.createTimeLog(userId, dto);
   }
 
   async timeLog(id: string): Promise<TimeLogResponseDto> {

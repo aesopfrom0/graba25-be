@@ -1,17 +1,20 @@
 import { UsersService } from '@graba25-be/domains/users/users.service';
+import { UserId } from '@graba25-be/shared/decorators/user-id.decorator';
 import {
   CreateUserBodyDto,
   UpdateUserBodyDto,
 } from '@graba25-be/shared/dtos/requests/user-request.dto';
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id')
-  async user(@Param('id') id: string) {
-    return await this.usersService.user(id);
+  @UseGuards(AuthGuard('jwt'))
+  async user(@UserId() userId: string) {
+    return await this.usersService.user(userId);
   }
 
   @Post('')

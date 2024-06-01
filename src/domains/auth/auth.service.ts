@@ -12,6 +12,7 @@ export class AuthService {
   ) {}
 
   async validateUser(user: Partial<User>): Promise<any> {
+    console.log(user);
     const existingUser = await this.userModel.findOne({ googleId: user.googleId });
 
     if (existingUser) {
@@ -24,9 +25,12 @@ export class AuthService {
   }
 
   createJwtPayload(user: User) {
-    const payload = { googleId: user.googleId, email: user.email };
+    const payload = { sub: user.googleId, email: user.email };
+    const token = this.jwtService.sign(payload);
+    console.log('JWT Payload:', payload); // 로그 추가
+    console.log('JWT Token:', token); // 로그 추가
     return {
-      accessToken: this.jwtService.sign(payload),
+      accessToken: token,
     };
   }
 }

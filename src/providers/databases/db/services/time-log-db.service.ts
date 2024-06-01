@@ -1,6 +1,7 @@
 import { BaseService } from '@graba25-be/providers/base.service';
 import { Interval, TimeLog } from '@graba25-be/providers/databases/db/schemas/time-log.schema';
 import {
+  CreateTimeLogRequestDto,
   EndIntervalRequestDto,
   StartIntervalRequestDto,
   UpdateTimeLogRequestDto,
@@ -23,10 +24,10 @@ export class TimeLogDbService extends BaseService {
     super();
   }
 
-  async createTimeLog(dto: any): Promise<TimeLogResponseDto> {
+  async createTimeLog(userId: string, dto: CreateTimeLogRequestDto): Promise<TimeLogResponseDto> {
     try {
       const { start, ...rest } = dto;
-      const { id: timeLogId } = await this.intervalModel.create({ start });
+      const { id: timeLogId } = await this.intervalModel.create({ user: userId, start });
       const newTimeLog = new this.timeLogModel({ ...rest, intervals: [timeLogId] });
       const { id } = await newTimeLog.save();
       if (!id) {

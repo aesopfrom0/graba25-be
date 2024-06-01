@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly authService: AuthService, private configService: ConfigService) {
+  constructor(private readonly authService: AuthService, configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -16,8 +16,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any): Promise<User> {
-    const { sub: userId } = payload;
-    const user = await this.authService.validateUser(userId);
+    console.log(payload);
+    const { sub: googleId } = payload;
+    const user = await this.authService.validateUser({ googleId });
     if (!user) {
       throw new UnauthorizedException();
     }

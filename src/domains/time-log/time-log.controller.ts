@@ -1,18 +1,21 @@
 import { TimeLogService } from '@graba25-be/domains/time-log/time-log.service';
+import { UserId } from '@graba25-be/shared/decorators/user-id.decorator';
 import {
   CreateTimeLogRequestDto,
   EndIntervalRequestDto,
   StartIntervalRequestDto,
 } from '@graba25-be/shared/dtos/requests/time-log-request.dto';
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('time-logs')
+@UseGuards(AuthGuard('jwt'))
 export class TimeLogController {
   constructor(private readonly timeLogService: TimeLogService) {}
 
   @Post()
-  async createTimeLog(@Body() dto: CreateTimeLogRequestDto) {
-    return await this.timeLogService.createTimeLog(dto);
+  async createTimeLog(@UserId() userId: string, @Body() dto: CreateTimeLogRequestDto) {
+    return await this.timeLogService.createTimeLog(userId, dto);
   }
 
   @Get(':id')

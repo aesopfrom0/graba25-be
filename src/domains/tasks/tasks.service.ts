@@ -10,8 +10,8 @@ export class TasksService extends BaseService {
     super();
   }
 
-  async getTasks(includeArchived: boolean): Promise<TasksResponseDto> {
-    return await this.taskDbService.readTasks(includeArchived);
+  async getTasks(userId: string, includeArchived: boolean): Promise<TasksResponseDto> {
+    return await this.taskDbService.readTasks(userId, includeArchived);
   }
 
   async task(id: string): Promise<TaskResponseDto> {
@@ -30,8 +30,10 @@ export class TasksService extends BaseService {
     return await this.taskDbService.archiveTask(id);
   }
 
-  async archiveTasks(taskIds: string[]): Promise<string> {
-    this.logger.debug(`[${this.archiveTasks.name}] Archiving tasks: ${taskIds.toString()}`);
+  async archiveTasks(userId: string, taskIds: string[]): Promise<string> {
+    this.logger.debug(
+      `[${this.archiveTasks.name}] user(${userId}) Archiving tasks: ${taskIds.toString()}`,
+    );
 
     return await this.taskDbService.updateTasks(taskIds, { isArchived: true });
   }

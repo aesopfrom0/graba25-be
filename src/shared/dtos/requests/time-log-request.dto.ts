@@ -1,5 +1,4 @@
 export class CreateTimeLogRequestDto {
-  user!: string;
   attemptN!: number;
   task!: string;
   start!: Date;
