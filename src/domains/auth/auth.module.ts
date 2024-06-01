@@ -7,14 +7,19 @@ import { AuthController } from './auth.controller';
 import { GoogleStrategy } from '@graba25-be/domains/auth/strategies/google.strategy';
 import { UserSchema } from '@graba25-be/providers/databases/db/schemas/user.schema';
 import { JwtStrategy } from '@graba25-be/domains/auth/strategies/jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     PassportModule,
-    JwtModule.register({
-      secret: 'yourSecretKey', // JWT secret key
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
+      inject: [ConfigService],
     }),
   ],
   providers: [AuthService, GoogleStrategy, JwtStrategy],

@@ -3,14 +3,15 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
 import { AuthService } from '@graba25-be/domains/auth/auth.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly authService: AuthService, private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: 'yourSecretKey', // JWT secret key
+      secretOrKey: configService.get('JWT_SECRET'),
     });
   }
 
