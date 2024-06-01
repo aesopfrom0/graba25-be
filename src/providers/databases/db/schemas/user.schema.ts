@@ -3,14 +3,17 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class User extends Document {
-  @Prop({ required: true })
-  name!: string;
-
   @Prop({ required: true, unique: true })
   email!: string;
 
   @Prop({ required: true })
-  password!: string;
+  displayName!: string;
+
+  @Prop()
+  photoUrl!: string;
+
+  @Prop()
+  googleId?: string;
 
   @Prop({ default: new Date() })
   createdAt!: Date;
@@ -20,3 +23,7 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.virtual('id').get(function () {
+  return this._id.toString();
+});
