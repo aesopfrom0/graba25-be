@@ -29,4 +29,8 @@ export class UsersService {
   async updateUser(id: string, userDto: UpdateUserBodyDto) {
     return await this.userDbService.updateUser(id, userDto);
   }
+
+  async getUserByEmail(email: string) {
+    return await this.userDbService.readUserByEmail(email);
+  }
 }

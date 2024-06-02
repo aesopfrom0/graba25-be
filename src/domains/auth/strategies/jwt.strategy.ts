@@ -1,13 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
-import { AuthService } from '@graba25-be/domains/auth/auth.service';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from '@graba25-be/domains/users/users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly authService: AuthService, configService: ConfigService) {
+  constructor(private usersService: UsersService, configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -15,13 +15,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any): Promise<User> {
-    console.log(payload);
-    const { sub: googleId } = payload;
-    const user = await this.authService.validateUser({ googleId });
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return user;
+  async validate(payload: any): Promise<Partial<User>> {
+    console.log('jwt validate:', payload);
+    return {
+      id: payload.sub,
+      email: payload.email,
+      googleId: payload.googleId,
+    };
   }
 }

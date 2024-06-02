@@ -19,6 +19,7 @@ export class TasksService extends BaseService {
   }
 
   async createTask(dto: BaseTaskDto): Promise<TaskResponseDto> {
+    this.logger.debug(`[${this.createTask.name}] Creating task: ${JSON.stringify(dto)}`);
     return await this.taskDbService.createTask(dto);
   }
 

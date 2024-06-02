@@ -8,6 +8,7 @@ import { GoogleStrategy } from '@graba25-be/domains/auth/strategies/google.strat
 import { UserSchema } from '@graba25-be/providers/databases/db/schemas/user.schema';
 import { JwtStrategy } from '@graba25-be/domains/auth/strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from '@graba25-be/domains/users/users.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
+    UsersModule,
   ],
   providers: [AuthService, GoogleStrategy, JwtStrategy],
   controllers: [AuthController],

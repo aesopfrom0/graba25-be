@@ -50,8 +50,6 @@ export class TaskDbService extends BaseService {
     userId: string,
     includeArchived: boolean,
   ): Promise<{ count: number; rows: TaskResponseDto[] }> {
-    console.log('userId', userId);
-    console.log('readTasks');
     try {
       const defaultFilter = { user: userId };
       const filter = includeArchived ? defaultFilter : { ...defaultFilter, isArchived: false };
