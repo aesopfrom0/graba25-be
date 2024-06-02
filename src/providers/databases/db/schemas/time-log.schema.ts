@@ -49,6 +49,6 @@ export class TimeLog extends Document {
 
 export const TimeLogSchema = SchemaFactory.createForClass(TimeLog);
 
-TimeLogSchema.virtual('id').get(function () {
-  return this._id.toString();
-});
+// TimeLogSchema.virtual('id').get(function () {
+//   return this._id.toString();
+// });
