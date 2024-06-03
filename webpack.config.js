@@ -1,12 +1,26 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  // ...
-  plugins: [
-    // ...
-    new CopyWebpackPlugin({
-      patterns: [{ from: 'src/config/*.yaml', to: 'config/[name].[ext]' }],
-    }),
-  ],
+  entry: './src/main.ts',
+  target: 'node',
+  externals: [nodeExternals()],
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  output: {
+    filename: 'main.js',
+    path: path.resolve(__dirname, 'dist'),
+    libraryTarget: 'commonjs2',
+  },
 };

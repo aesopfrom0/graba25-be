@@ -4,21 +4,54 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-northeast-2
+  stage: ${opt:stage, 'dev'} # Default to 'dev' stage
+
+  environment:
+    # ${file(dist/config/.env.${self:provider.stage})}
+    SERVER_URL: ${env:SERVER_URL}
+    NOTION_API_KEY: ${env:NOTION_API_KEY}
+    TASK_TABLE_ID: ${env:TASK_TABLE_ID}
+    TIME_LOG_TABLE_ID: ${env:TIME_LOG_TABLE_ID}
+    MONGODB_URI: ${env:MONGODB_URI}
+    MONGODB_AUTO_CREATE: ${env:MONGODB_AUTO_CREATE}
+    MONGODB_AUTO_INDEX: ${env:MONGODB_AUTO_INDEX}
+    GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+    GOOGLE_CLIENT_SECRET: ${env:GOOGLE_CLIENT_SECRET}
+    JWT_SECRET: ${env:JWT_SECRET}
+    BY25_URL: ${env:BY25_URL}
 
 functions:
-  app:
-    handler: dist/main.handler
+  # app:
+  #   handler: dist/main.handler
+  #   events:
+  #     - http:
+  #         path: /
+  #         method: any
+  #     - http:
+  #         path: /{proxy+}
+  checkEnv:
+    handler: handler.checkEnv
     events:
       - http:
-          path: /
-          method: any
-      - http:
-          path: /{proxy+}
-          method: any
+          path: check-env
+          method: get
 
 plugins:
+  # - serverless-webpack
   - serverless-offline
+  - serverless-dotenv-plugin
 
+custom:
+  dotenv:
+    # path: dist/config/.env.${self:provider.stage, 'dev'}
+    # basePath: config/.env.dev
+    path: config/.env.${self:provider.stage, 'dev'}
+    logging: true
+    required:
+      file: true
+  webpack:
+    webpackConfig: './webpack.config.js'
+    includeModules: true
 package:
   exclude:
     - node_modules/**

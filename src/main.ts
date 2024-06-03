@@ -22,6 +22,9 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new TransformInterceptor());
 
+  // Log to check if environment variables are loaded correctly
+  console.log('SERVER_URL:', configService.get('SERVER_URL'));
+
   await app.init();
 }
 
@@ -30,6 +33,7 @@ const handler: APIGatewayProxyHandler = (event, context) => {
   if (!cachedServer) {
     cachedServer = createServer(server);
   }
+
   return proxy(cachedServer, event, context, 'PROMISE').promise;
 };
 
