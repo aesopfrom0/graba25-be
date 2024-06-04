@@ -28,7 +28,7 @@ export class TimeLogDbService extends BaseService {
     try {
       const { start, ...rest } = dto;
       const { id: timeLogId } = await this.intervalModel.create({ user: userId, start });
-      const newTimeLog = new this.timeLogModel({ ...rest, intervals: [timeLogId] });
+      const newTimeLog = new this.timeLogModel({ ...rest, user: userId, intervals: [timeLogId] });
       const { id } = await newTimeLog.save();
       if (!id) {
         throw new ApplicationException(
