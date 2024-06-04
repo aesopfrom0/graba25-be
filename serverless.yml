@@ -4,10 +4,9 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-northeast-2
-  stage: ${opt:stage, 'dev'} # Default to 'dev' stage
+  stage: ${opt:stage, 'dev'}
 
   environment:
-    # ${file(dist/config/.env.${self:provider.stage})}
     SERVER_URL: ${env:SERVER_URL}
     NOTION_API_KEY: ${env:NOTION_API_KEY}
     TASK_TABLE_ID: ${env:TASK_TABLE_ID}
@@ -21,39 +20,62 @@ provider:
     BY25_URL: ${env:BY25_URL}
 
 functions:
-  # app:
-  #   handler: dist/main.handler
-  #   events:
-  #     - http:
-  #         path: /
-  #         method: any
-  #     - http:
-  #         path: /{proxy+}
-  checkEnv:
-    handler: handler.checkEnv
+  app:
+    handler: dist/main.handler
     events:
       - http:
-          path: check-env
-          method: get
+          path: /
+          method: any
+      - http:
+          path: /{proxy+}
+          method: any
+  # checkEnv:
+  #   handler: handler.checkEnv
+  #   events:
+  #     - http:
+  #         path: check-env
+  #         method: get
 
 plugins:
-  # - serverless-webpack
   - serverless-offline
-  - serverless-dotenv-plugin
+  # - serverless-dotenv-plugin
+
+# custom:
+# dotenv:
+# path: dist/config/.env.${self:provider.stage, 'dev'}
+# basePath: config/.env.dev
+# path: config/.env.${self:provider.stage, 'dev'}
+# logging: true
+# required:
+#   file: true
+# webpack:
+#   webpackConfig: './webpack.config.js'
+#   includeModules: true
 
 custom:
-  dotenv:
-    # path: dist/config/.env.${self:provider.stage, 'dev'}
-    # basePath: config/.env.dev
-    path: config/.env.${self:provider.stage, 'dev'}
-    logging: true
-    required:
-      file: true
-  webpack:
-    webpackConfig: './webpack.config.js'
-    includeModules: true
-package:
+  package:
+    exclude:
+      - node_modules/**
+      - .serverless/**
+      - .webpack/**
+
+build:
+  esbuild:
+    # Enable or Disable bundling the function code and dependencies. (Default: true)
+    bundle: true
+    # Enable minifying function code. (Default: false)
+    minify: false
+    sourcemap: true
+    target: node20
+    external:
+      - express
+      - cache-manager
+      - '@nestjs/websockets'
+      - '@nestjs/microservices'
+      - class-transformer
+      - class-validator
+      - reflect-metadata
+      - rxjs
+      - '@nestjs/platform-express'
   exclude:
-    - node_modules/**
-    - .serverless/**
-    - .webpack/**
+    - aws-sdk
