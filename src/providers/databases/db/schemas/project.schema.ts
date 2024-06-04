@@ -35,6 +35,6 @@ export class Project extends Document {
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
 
-ProjectSchema.virtual('id').get(function () {
-  return this._id.toString();
-});
+// ProjectSchema.virtual('id').get(function (this: Project) {
+//   return this._id.toString();
+// });

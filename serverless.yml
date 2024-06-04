@@ -1,0 +1,81 @@
+service: graba25-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+
+  environment:
+    SERVER_URL: ${env:SERVER_URL}
+    NOTION_API_KEY: ${env:NOTION_API_KEY}
+    TASK_TABLE_ID: ${env:TASK_TABLE_ID}
+    TIME_LOG_TABLE_ID: ${env:TIME_LOG_TABLE_ID}
+    MONGODB_URI: ${env:MONGODB_URI}
+    MONGODB_AUTO_CREATE: ${env:MONGODB_AUTO_CREATE}
+    MONGODB_AUTO_INDEX: ${env:MONGODB_AUTO_INDEX}
+    GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+    GOOGLE_CLIENT_SECRET: ${env:GOOGLE_CLIENT_SECRET}
+    JWT_SECRET: ${env:JWT_SECRET}
+    BY25_URL: ${env:BY25_URL}
+
+functions:
+  app:
+    handler: dist/main.handler
+    events:
+      - http:
+          path: /
+          method: any
+      - http:
+          path: /{proxy+}
+          method: any
+  # checkEnv:
+  #   handler: handler.checkEnv
+  #   events:
+  #     - http:
+  #         path: check-env
+  #         method: get
+
+plugins:
+  - serverless-offline
+  # - serverless-dotenv-plugin
+
+# custom:
+# dotenv:
+# path: dist/config/.env.${self:provider.stage, 'dev'}
+# basePath: config/.env.dev
+# path: config/.env.${self:provider.stage, 'dev'}
+# logging: true
+# required:
+#   file: true
+# webpack:
+#   webpackConfig: './webpack.config.js'
+#   includeModules: true
+
+custom:
+  package:
+    exclude:
+      - node_modules/**
+      - .serverless/**
+      - .webpack/**
+
+build:
+  esbuild:
+    # Enable or Disable bundling the function code and dependencies. (Default: true)
+    bundle: true
+    # Enable minifying function code. (Default: false)
+    minify: false
+    sourcemap: true
+    target: node20
+    external:
+      - express
+      - cache-manager
+      - '@nestjs/websockets'
+      - '@nestjs/microservices'
+      - class-transformer
+      - class-validator
+      - reflect-metadata
+      - rxjs
+      - '@nestjs/platform-express'
+  exclude:
+    - aws-sdk

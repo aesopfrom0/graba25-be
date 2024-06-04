@@ -18,7 +18,8 @@ import { AuthModule } from './domains/auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`${__dirname}/config/.${process.env.NODE_ENV}.env`],
+      envFilePath: [`${__dirname}/config/.env.${process.env.NODE_ENV}`],
+      // envFilePath: [`${__dirname}/.env.${process.env.NODE_ENV}`],
       isGlobal: true,
       validationSchema: validateSchema(),
       validationOptions: {

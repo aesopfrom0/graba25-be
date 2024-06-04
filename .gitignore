@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+.serverless
 
 # Logs
 logs
@@ -37,6 +38,7 @@ lerna-debug.log*
 *.config.yml
 *.config.yaml
 *.env
+.env*
 !.env.example
 
 package-lock.json

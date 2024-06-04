@@ -19,10 +19,6 @@ export class Interval {
 
 export const IntervalSchema = SchemaFactory.createForClass(Interval);
 
-IntervalSchema.virtual('id').get(function () {
-  return this._id.toString();
-});
-
 @Schema({ timestamps: true })
 export class TimeLog extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
@@ -48,7 +44,3 @@ export class TimeLog extends Document {
 }
 
 export const TimeLogSchema = SchemaFactory.createForClass(TimeLog);
-
-TimeLogSchema.virtual('id').get(function () {
-  return this._id.toString();
-});

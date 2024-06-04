@@ -47,9 +47,9 @@ export class Task extends Document {
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
 
-TaskSchema.virtual('id').get(function () {
-  return this._id.toString();
-});
+// TaskSchema.virtual('id').get(function () {
+//   return this._id.toString();
+// });
 
 // TaskSchema.set('toObject', {
 //   virtuals: true,
