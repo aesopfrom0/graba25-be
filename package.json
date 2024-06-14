@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.14.1",
+    "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^9.4.3",
     "@nestjs/config": "^2.3.4",
     "@nestjs/core": "^9.4.3",
@@ -37,8 +38,10 @@
     "@notionhq/client": "^2.2.15",
     "aws-lambda": "^1.0.7",
     "aws-serverless-express": "^3.4.0",
+    "axios": "^1.7.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "dayjs": "^1.11.11",
     "google-auth-library": "^8.9.0",
     "joi": "^17.13.0",
     "lodash": "^4.17.21",

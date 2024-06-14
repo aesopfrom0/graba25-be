@@ -22,6 +22,7 @@ export class UserDbService extends BaseService {
         name: dto.name,
         email: dto.email,
         password: dto.password,
+        timeZone: dto.timeZone,
       });
       const resp = await user.save();
       return new UserResponseDto(resp);

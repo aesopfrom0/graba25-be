@@ -14,6 +14,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from '@graba25-be/shared/filters/all-exception.filter';
 import { TimeLogModule } from './domains/time-log/time-log.module';
 import { AuthModule } from './domains/auth/auth.module';
+import { HarvestModule } from './domains/harvest/harvest.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AuthModule } from './domains/auth/auth.module';
     ShutdownModule,
     TimeLogModule,
     AuthModule,
+    HarvestModule,
   ],
   controllers: [AppController],
   providers: [

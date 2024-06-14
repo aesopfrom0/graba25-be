@@ -11,6 +11,8 @@ import { ProjectDbService } from '@graba25-be/providers/databases/db/services/pr
 import { TaskDbService } from '@graba25-be/providers/databases/db/services/task-db.service';
 import { UserDbService } from '@graba25-be/providers/databases/db/services/user-db.service';
 import { TimeLogDbService } from '@graba25-be/providers/databases/db/services/time-log-db.service';
+import { HarvestSchema } from '@graba25-be/providers/databases/db/schemas/harvest.schema';
+import { HarvestDbService } from '@graba25-be/providers/databases/db/services/harvest-db.service';
 // import { TimeLogDbService } from '@graba25-be/providers/databases/db/services/time-log-db.service';
 
 @Module({
@@ -21,9 +23,10 @@ import { TimeLogDbService } from '@graba25-be/providers/databases/db/services/ti
       { name: 'Project', schema: ProjectSchema },
       { name: 'TimeLog', schema: TimeLogSchema },
       { name: 'Interval', schema: IntervalSchema },
+      { name: 'Harvest', schema: HarvestSchema },
     ]),
   ],
-  providers: [TaskDbService, UserDbService, ProjectDbService, TimeLogDbService],
-  exports: [TaskDbService, UserDbService, ProjectDbService, TimeLogDbService],
+  providers: [TaskDbService, UserDbService, ProjectDbService, TimeLogDbService, HarvestDbService],
+  exports: [TaskDbService, UserDbService, ProjectDbService, TimeLogDbService, HarvestDbService],
 })
 export class DbServicesModule {}

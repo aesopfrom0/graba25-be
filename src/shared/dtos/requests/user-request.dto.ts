@@ -12,6 +12,9 @@ export class CreateUserBodyDto {
   @ApiProperty()
   @IsStrongPassword({ minLength: 4 })
   password!: string;
+
+  @ApiProperty()
+  timeZone!: string;
 }
 
 export class UpdateUserBodyDto {
@@ -28,4 +31,7 @@ export class UpdateUserBodyDto {
   @IsOptional()
   @IsStrongPassword({ minLength: 4 })
   password?: string;
+
+  @ApiProperty()
+  timeZone?: string;
 }

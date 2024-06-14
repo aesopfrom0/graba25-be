@@ -14,7 +14,6 @@ export class UsersController {
   @Get('')
   @UseGuards(AuthGuard('jwt'))
   async user(@UserId() userId: string) {
-    console.log('userId:', userId);
     return await this.usersService.user(userId);
   }
 
