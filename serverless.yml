@@ -40,18 +40,6 @@ plugins:
   - serverless-offline
   # - serverless-dotenv-plugin
 
-# custom:
-# dotenv:
-# path: dist/config/.env.${self:provider.stage, 'dev'}
-# basePath: config/.env.dev
-# path: config/.env.${self:provider.stage, 'dev'}
-# logging: true
-# required:
-#   file: true
-# webpack:
-#   webpackConfig: './webpack.config.js'
-#   includeModules: true
-
 custom:
   package:
     exclude:

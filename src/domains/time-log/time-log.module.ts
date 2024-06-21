@@ -7,5 +7,6 @@ import { DbServicesModule } from '@graba25-be/providers/databases/db/db-services
   imports: [DbServicesModule],
   controllers: [TimeLogController],
   providers: [TimeLogService],
+  exports: [TimeLogService],
 })
 export class TimeLogModule {}

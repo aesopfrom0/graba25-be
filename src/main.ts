@@ -24,13 +24,20 @@ async function bootstrap() {
   // Log to check if environment variables are loaded correctly
   console.log('SERVER_URL:', configService.get('SERVER_URL'));
 
-  await app.init();
-
-  const expressApp = app.getHttpAdapter().getInstance();
-  return serverlessExpress({ app: expressApp });
+  const env = configService.get('NODE_ENV');
+  if (env === 'local') {
+    const port = configService.get('PORT');
+    await app.listen(port, () => {
+      console.log(`${env} server listening on ${port}`);
+    });
+  } else {
+    await app.init();
+    const expressApp = app.getHttpAdapter().getInstance();
+    return serverlessExpress({ app: expressApp });
+  }
 }
 
-const handler = async (event, context, callback) => {
+export const handler = async (event, context, callback) => {
   if (!server) {
     server = server ?? (await bootstrap());
   }
@@ -39,5 +46,3 @@ const handler = async (event, context, callback) => {
 };
 
 bootstrap();
-
-export { handler };

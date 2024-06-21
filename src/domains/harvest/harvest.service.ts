@@ -30,7 +30,7 @@ export class HarvestService extends BaseService {
 
   async processDailyHarvest(date: string): Promise<void> {
     // Fetch data to be processed for the day
-    const dataToProcess = await this.fetchDataForDate(date); // This method should be implemented to fetch relevant data
+    const dataToProcess = await this.fetchDataForDate(); // This method should be implemented to fetch relevant data
 
     // Process and create harvest records
     for (const data of dataToProcess) {
@@ -45,7 +45,7 @@ export class HarvestService extends BaseService {
     }
   }
 
-  private async fetchDataForDate(date: string): Promise<any[]> {
+  private async fetchDataForDate(): Promise<any[]> {
     // Implement logic to fetch data for the specified date
 
     // This is a placeholder and should be replaced with actual data fetching logic

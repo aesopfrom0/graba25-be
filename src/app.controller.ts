@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { TimeLogService } from '@graba25-be/domains/time-log/time-log.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private timeLogService: TimeLogService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('test')
+  async test() {
+    return await this.timeLogService.getTimeLogsGroupedByUser('2024-05-14', '2024-06-15');
   }
 }

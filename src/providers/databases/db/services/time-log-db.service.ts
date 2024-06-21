@@ -9,7 +9,7 @@ import {
 import {
   IntervalResponseDto,
   TimeLogResponseDto,
-} from '@graba25-be/shared/dtos/responses/time-log-resopnse.dto';
+} from '@graba25-be/shared/dtos/responses/time-log-response.dto';
 import ApplicationException from '@graba25-be/shared/exceptions/application.exception';
 import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
@@ -145,5 +145,69 @@ export class TimeLogDbService extends BaseService {
         ErrorCode.SYSTEM_ERROR,
       );
     }
+  }
+
+  async getTimeLogsGroupedByUser(startDate: Date, endDate: Date): Promise<TimeLogResponseDto[]> {
+    const timeLogs = await this.timeLogModel
+      .aggregate([
+        {
+          $match: {
+            createdAt: { $gte: startDate, $lt: endDate },
+          },
+        },
+        {
+          $group: {
+            _id: '$user',
+            totalPomodoros: {
+              $sum: {
+                $cond: [{ $eq: ['$isFinished', true] }, 1, 0],
+              },
+            },
+            totalSecondsInvested: {
+              $sum: {
+                $reduce: {
+                  input: {
+                    $filter: {
+                      input: '$intervals',
+                      as: 'interval',
+                      cond: { $ne: ['$$interval.end', null] },
+                    },
+                  },
+                  initialValue: 0,
+                  in: {
+                    $add: ['$$value', { $subtract: ['$$this.end', '$$this.start'] }],
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'users', // Ensure this matches the actual collection name
+            localField: '_id',
+            foreignField: '_id',
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: '$userDetails',
+        },
+        {
+          $project: {
+            _id: 0,
+            userId: '$_id',
+            displayName: '$userDetails.displayName',
+            email: '$userDetails.email',
+            totalPomodoros: 1,
+            totalTasksCompleted: 1,
+            totalSecondsInvested: 1,
+          },
+        },
+      ])
+      .exec();
+
+    console.log(timeLogs);
+    return timeLogs;
   }
 }
