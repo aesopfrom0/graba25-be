@@ -14,7 +14,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: configService.get('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
       callbackURL: configService.get('SERVER_URL') + '/auth/google/callback',
-      scope: ['email', 'profile', 'https://www.googleapis.com/auth/calendar.readonly'],
+      scope: ['email', 'profile', 'https://www.googleapis.com/auth/calendar.settings.readonly'],
     });
   }
 
@@ -26,7 +26,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<any> {
     const { id, displayName, emails, photos } = profile;
 
-    // Get the user's time zone from Google Calendar API
+    // Fetch user's time zone
     const timeZone = await this.getUserTimeZone(accessToken);
 
     const user = await this.authService.validateUser({
@@ -40,14 +40,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   private async getUserTimeZone(accessToken: string): Promise<string> {
+    // settings/ 에서 locale 등 다른 정보도 한번에 가져올 수 있음
     const url = 'https://www.googleapis.com/calendar/v3/users/me/settings/timezone';
+
     try {
       const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      return response.data.value; // The timezone will be in response.data.value
+      return response.data.value; // e.g. 'Europe/Istanbul'
     } catch (e: any) {
       throw new ApplicationException(
         new InternalServerErrorException(`Failed to fetch user's time zone: ${e.message}`),
