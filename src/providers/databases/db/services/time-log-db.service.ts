@@ -148,12 +148,27 @@ export class TimeLogDbService extends BaseService {
   }
 
   async getTimeLogsGroupedByUser(startDate: Date, endDate: Date): Promise<TimeLogResponseDto[]> {
+    this.logger.debug(
+      `[${this.getTimeLogsGroupedByUser.name}] startDate: ${startDate}, endDate: ${endDate}`,
+    );
+
     const timeLogs = await this.timeLogModel
       .aggregate([
         {
           $match: {
-            createdAt: { $gte: startDate, $lt: endDate },
+            updatedAt: { $gte: startDate, $lt: endDate },
           },
+        },
+        {
+          $lookup: {
+            from: 'intervals', // Ensure this matches the actual collection name for intervals
+            localField: 'intervals',
+            foreignField: '_id',
+            as: 'intervalDetails',
+          },
+        },
+        {
+          $unwind: '$intervalDetails',
         },
         {
           $group: {
@@ -165,26 +180,14 @@ export class TimeLogDbService extends BaseService {
             },
             totalSecondsInvested: {
               $sum: {
-                $reduce: {
-                  input: {
-                    $filter: {
-                      input: '$intervals',
-                      as: 'interval',
-                      cond: { $ne: ['$$interval.end', null] },
-                    },
-                  },
-                  initialValue: 0,
-                  in: {
-                    $add: ['$$value', { $subtract: ['$$this.end', '$$this.start'] }],
-                  },
-                },
+                $divide: [{ $subtract: ['$intervalDetails.end', '$intervalDetails.start'] }, 1000],
               },
             },
           },
         },
         {
           $lookup: {
-            from: 'users', // Ensure this matches the actual collection name
+            from: 'users', // Ensure this matches the actual collection name for users
             localField: '_id',
             foreignField: '_id',
             as: 'userDetails',
@@ -200,14 +203,12 @@ export class TimeLogDbService extends BaseService {
             displayName: '$userDetails.displayName',
             email: '$userDetails.email',
             totalPomodoros: 1,
-            totalTasksCompleted: 1,
             totalSecondsInvested: 1,
           },
         },
       ])
       .exec();
 
-    console.log(timeLogs);
     return timeLogs;
   }
 }

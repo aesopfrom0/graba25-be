@@ -1,15 +1,16 @@
+import { TimeLogService } from '@graba25-be/domains/time-log/time-log.service';
 import { BaseService } from '@graba25-be/providers/base.service';
 import { HarvestDbService } from '@graba25-be/providers/databases/db/services/harvest-db.service';
-import { TimeLogDbService } from '@graba25-be/providers/databases/db/services/time-log-db.service';
 import { CreateHarvestRequestDto } from '@graba25-be/shared/dtos/requests/harvest-request.dto';
 import { HarvestResponseDto } from '@graba25-be/shared/dtos/responses/harvest-response.dto';
 import { Injectable } from '@nestjs/common';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class HarvestService extends BaseService {
   constructor(
     private readonly harvestDbService: HarvestDbService,
-    private readonly timeLogDbService: TimeLogDbService,
+    private readonly timeLogService: TimeLogService,
   ) {
     super();
   }
@@ -47,6 +48,11 @@ export class HarvestService extends BaseService {
 
   private async fetchDataForDate(date: string): Promise<any[]> {
     // Implement logic to fetch data for the specified date
+    const data = await this.timeLogService.getTimeLogsGroupedByUser(
+      dayjs(date).format(),
+      dayjs(date).add(1, 'day').format(),
+    );
+    console.log(data);
 
     // This is a placeholder and should be replaced with actual data fetching logic
     return [

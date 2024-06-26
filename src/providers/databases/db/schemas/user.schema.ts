@@ -22,7 +22,7 @@ export class User extends Document {
   updatedAt!: Date;
 
   @Prop({ required: true })
-  timeZone!: string; // e.g. 'America/New_York'
+  timeZone!: string; // e.g. 'Europe/Istanbul'
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
