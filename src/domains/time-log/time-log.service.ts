@@ -5,7 +5,10 @@ import {
   EndIntervalRequestDto,
   StartIntervalRequestDto,
 } from '@graba25-be/shared/dtos/requests/time-log-request.dto';
-import { TimeLogResponseDto } from '@graba25-be/shared/dtos/responses/time-log-response.dto';
+import {
+  TimeLogGroupedByUserResponseDto,
+  TimeLogResponseDto,
+} from '@graba25-be/shared/dtos/responses/time-log-response.dto';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -46,7 +49,10 @@ export class TimeLogService extends BaseService {
     return await this.timeLogDbService.updateInterval(intervalId, dto);
   }
 
-  async getTimeLogsGroupedByUser(startDate: string, endDate: string) {
+  async getTimeLogsGroupedByUser(
+    startDate: string,
+    endDate: string,
+  ): Promise<TimeLogGroupedByUserResponseDto[]> {
     this.logger.debug(`[${this.getTimeLogsGroupedByUser.name}] Getting time logs grouped by user`);
     return await this.timeLogDbService.getTimeLogsGroupedByUser(
       new Date(startDate),

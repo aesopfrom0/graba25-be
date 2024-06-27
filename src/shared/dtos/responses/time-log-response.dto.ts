@@ -39,3 +39,11 @@ export class TimeLogResponseDto {
   @ValidateNested()
   intervals?: Interval[];
 }
+
+export class TimeLogGroupedByUserResponseDto {
+  totalPomodoros!: number;
+  totalSecondsInvested!: number;
+  userId!: string;
+  displayName!: string;
+  email!: string;
+}

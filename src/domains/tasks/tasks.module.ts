@@ -8,5 +8,6 @@ import { DbServicesModule } from 'src/providers/databases/db/db-services.module'
   imports: [NotionDbServicesModule, DbServicesModule],
   providers: [TasksService],
   controllers: [TasksController],
+  exports: [TasksService],
 })
 export class TasksModule {}

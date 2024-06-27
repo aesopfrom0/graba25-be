@@ -14,6 +14,10 @@ export class TasksService extends BaseService {
     return await this.taskDbService.readTasks(userId, includeArchived);
   }
 
+  async getAllFinishedTasksBetween(gteDate: Date, ltDate: Date) {
+    return await this.taskDbService.readAllFinishedTasksBetween(gteDate, ltDate);
+  }
+
   async task(id: string): Promise<TaskResponseDto> {
     return await this.taskDbService.readTask(id);
   }

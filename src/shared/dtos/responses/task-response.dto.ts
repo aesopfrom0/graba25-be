@@ -11,7 +11,7 @@ export class TaskResponseDto {
     this.isFinished = task.isFinished;
     this.isArchived = task.isArchived;
     this.dueDate = task.dueDate;
-    this.notionPageId = task.notionPageId;
+    // this.notionPageId = task.notionPageId;
     this.createdAt = task.createdAt;
     this.updatedAt = task.updatedAt;
   }
@@ -64,4 +64,9 @@ export class TaskResponseDto {
 export class TasksResponseDto {
   count!: number;
   rows!: TaskResponseDto[];
+}
+
+export class TaskGroupedByUserResponseDto {
+  totalFinishedTasks!: number;
+  userId!: string;
 }

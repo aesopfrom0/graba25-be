@@ -1,6 +1,6 @@
 export class CreateHarvestRequestDto {
   userId!: string;
-  date!: string; // YYMMDD
+  date!: number; // YYYYMMDD
   pomodoros!: number;
   tasksCompleted!: number;
   secondsInvested!: number;

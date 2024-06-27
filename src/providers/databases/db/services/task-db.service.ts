@@ -6,7 +6,10 @@ import mongoose from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
 import { Task } from 'src/providers/databases/db/schemas/task.schema';
 import { BaseTaskDto, UpdateTaskDto } from 'src/shared/dtos/base-task.dto';
-import { TaskResponseDto } from 'src/shared/dtos/responses/task-response.dto';
+import {
+  TaskGroupedByUserResponseDto,
+  TaskResponseDto,
+} from 'src/shared/dtos/responses/task-response.dto';
 
 export class TaskDbService extends BaseService {
   constructor(@InjectModel('Task') private readonly taskModel: mongoose.Model<Task>) {
@@ -56,6 +59,39 @@ export class TaskDbService extends BaseService {
       const tasks = (await this.taskModel.find(filter)).map((task) => new TaskResponseDto(task));
       const count = await this.taskModel.countDocuments(filter);
       return { count, rows: tasks };
+    } catch (e) {
+      this.logger.error(e);
+      throw new ApplicationException(
+        new InternalServerErrorException(TaskDbService.name),
+        ErrorCode.SYSTEM_ERROR,
+      );
+    }
+  }
+
+  async readAllFinishedTasksBetween(
+    gteDate: Date,
+    ltDate: Date,
+  ): Promise<TaskGroupedByUserResponseDto[]> {
+    try {
+      const tasks = await this.taskModel.aggregate([
+        {
+          $match: {
+            isFinished: true,
+            finishedAt: { $gte: gteDate, $lt: ltDate },
+          },
+        },
+        {
+          $group: {
+            _id: '$user',
+            totalFinishedTasks: { $sum: 1 }, // 완료된 작업 수 계산
+          },
+        },
+      ]);
+
+      return tasks.map((group) => ({
+        userId: group._id.toString(),
+        totalFinishedTasks: group.totalFinishedTasks,
+      }));
     } catch (e) {
       this.logger.error(e);
       throw new ApplicationException(

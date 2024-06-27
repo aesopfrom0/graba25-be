@@ -39,7 +39,7 @@ export class TimeLog extends Document {
   @Prop({ default: new Date() })
   updatedAt!: Date;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Interval', default: [] }] })
+  @Prop({ type: [{ type: IntervalSchema, default: [] }] })
   intervals!: Interval[];
 }
 

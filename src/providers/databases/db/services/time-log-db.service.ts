@@ -8,13 +8,14 @@ import {
 } from '@graba25-be/shared/dtos/requests/time-log-request.dto';
 import {
   IntervalResponseDto,
+  TimeLogGroupedByUserResponseDto,
   TimeLogResponseDto,
 } from '@graba25-be/shared/dtos/responses/time-log-response.dto';
 import ApplicationException from '@graba25-be/shared/exceptions/application.exception';
 import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export class TimeLogDbService extends BaseService {
   constructor(
@@ -27,8 +28,8 @@ export class TimeLogDbService extends BaseService {
   async createTimeLog(userId: string, dto: CreateTimeLogRequestDto): Promise<TimeLogResponseDto> {
     try {
       const { start, ...rest } = dto;
-      const { id: timeLogId } = await this.intervalModel.create({ user: userId, start });
-      const newTimeLog = new this.timeLogModel({ ...rest, user: userId, intervals: [timeLogId] });
+      const interval = await this.intervalModel.create({ user: userId, start });
+      const newTimeLog = new this.timeLogModel({ ...rest, user: userId, intervals: [interval] });
       const { id } = await newTimeLog.save();
       if (!id) {
         throw new ApplicationException(
@@ -147,7 +148,10 @@ export class TimeLogDbService extends BaseService {
     }
   }
 
-  async getTimeLogsGroupedByUser(startDate: Date, endDate: Date): Promise<TimeLogResponseDto[]> {
+  async getTimeLogsGroupedByUser(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<TimeLogGroupedByUserResponseDto[]> {
     this.logger.debug(
       `[${this.getTimeLogsGroupedByUser.name}] startDate: ${startDate}, endDate: ${endDate}`,
     );
@@ -160,15 +164,7 @@ export class TimeLogDbService extends BaseService {
           },
         },
         {
-          $lookup: {
-            from: 'intervals', // Ensure this matches the actual collection name for intervals
-            localField: 'intervals',
-            foreignField: '_id',
-            as: 'intervalDetails',
-          },
-        },
-        {
-          $unwind: '$intervalDetails',
+          $unwind: '$intervals',
         },
         {
           $group: {
@@ -180,7 +176,7 @@ export class TimeLogDbService extends BaseService {
             },
             totalSecondsInvested: {
               $sum: {
-                $divide: [{ $subtract: ['$intervalDetails.end', '$intervalDetails.start'] }, 1000],
+                $divide: [{ $subtract: ['$intervals.end', '$intervals.start'] }, 1000],
               },
             },
           },
