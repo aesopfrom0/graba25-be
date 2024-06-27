@@ -31,31 +31,60 @@ export class HarvestService extends BaseService {
     };
   }
 
-  async processDailyHarvest(date: number): Promise<void> {
+  private async createBulkHarvests(dtos: CreateHarvestRequestDto[]): Promise<HarvestResponseDto[]> {
+    const harvests = await this.harvestDbService.createBulkHarvests(dtos);
+    return harvests.map((harvest) => ({
+      id: harvest.id,
+      userId: harvest.userId,
+      date: harvest.date,
+      hoursInvested: (harvest.secondsInvested / 3600).toFixed(2),
+      pomodoros: harvest.pomodoros,
+      tasksCompleted: harvest.tasksCompleted,
+    }));
+  }
+
+  async processDailyHarvest(date: string): Promise<{ date: string; count: number }> {
     // Fetch data to be processed for the day
-    const dateString = date.toString(); // '20240605'
-    const dateInDayjs = dayjs(dateString, 'YYYYMMDD');
-    const formattedDate = dateInDayjs.format('YYYY-MM-DD'); // '2024-06-05'
-    const dataToProcess = await this.fetchDataForDate(formattedDate); // This method should be implemented to fetch relevant data
+    const dateInDayjs = dayjs(date);
+    const dateInNumber = +dateInDayjs.format('YYYYMMDD');
+    const dataToProcess = await this.fetchDataForDate(date); // This method should be implemented to fetch relevant data
     const countFinishedTasks = await this.tasksService.getAllFinishedTasksBetween(
       dateInDayjs.toDate(),
       dateInDayjs.add(1, 'day').toDate(),
     );
 
     // Process and create harvest records
-    const harvestMap = new Map<string, CreateHarvestRequestDto>();
+    const userIdSet = new Set<string>();
+    const createHarvestDtos: CreateHarvestRequestDto[] = [];
     for (const data of dataToProcess) {
       const userId = data.userId;
+      userIdSet.add(userId);
       const createHarvestDto: CreateHarvestRequestDto = {
         userId,
-        date,
+        date: dateInNumber,
         pomodoros: data.totalPomodoros,
-        tasksCompleted: 0,
+        tasksCompleted:
+          countFinishedTasks.find((task) => task.userId === userId)?.totalFinishedTasks || 0,
         secondsInvested: data.totalSecondsInvested,
       };
-      harvestMap.set(data.userId, createHarvestDto);
-      await this.createHarvest(createHarvestDto);
+      createHarvestDtos.push(createHarvestDto);
     }
+
+    // Create harvest records for users who didn't have any time logs
+    countFinishedTasks.forEach((user) => {
+      if (!userIdSet.has(user.userId)) {
+        createHarvestDtos.push({
+          userId: user.userId,
+          date: dateInNumber,
+          pomodoros: 0,
+          tasksCompleted: user.totalFinishedTasks,
+          secondsInvested: 0,
+        });
+      }
+    });
+
+    await this.createBulkHarvests(createHarvestDtos);
+    return { date, count: createHarvestDtos.length };
   }
 
   private async fetchDataForDate(date: string): Promise<TimeLogGroupedByUserResponseDto[]> {

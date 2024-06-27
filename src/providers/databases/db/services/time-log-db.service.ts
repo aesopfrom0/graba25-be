@@ -15,7 +15,7 @@ import ApplicationException from '@graba25-be/shared/exceptions/application.exce
 import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 
 export class TimeLogDbService extends BaseService {
   constructor(

@@ -10,4 +10,8 @@ export class HarvestDbService {
     const harvest = new this.harvestModel(dto);
     return await harvest.save();
   }
+
+  async createBulkHarvests(dtos: CreateHarvestRequestDto[]): Promise<Harvest[]> {
+    return await this.harvestModel.insertMany(dtos);
+  }
 }

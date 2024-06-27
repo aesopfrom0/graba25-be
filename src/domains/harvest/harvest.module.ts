@@ -9,5 +9,6 @@ import { TasksModule } from '@graba25-be/domains/tasks/tasks.module';
   imports: [DbServicesModule, TimeLogModule, TasksModule],
   controllers: [HarvestController],
   providers: [HarvestService],
+  exports: [HarvestService],
 })
 export class HarvestModule {}

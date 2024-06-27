@@ -15,6 +15,7 @@ import { AllExceptionsFilter } from '@graba25-be/shared/filters/all-exception.fi
 import { TimeLogModule } from './domains/time-log/time-log.module';
 import { AuthModule } from './domains/auth/auth.module';
 import { HarvestModule } from './domains/harvest/harvest.module';
+import { BatchModule } from './providers/batch/batch.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { HarvestModule } from './domains/harvest/harvest.module';
     TimeLogModule,
     AuthModule,
     HarvestModule,
+    BatchModule,
   ],
   controllers: [AppController],
   providers: [

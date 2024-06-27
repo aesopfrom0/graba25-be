@@ -21,7 +21,7 @@ provider:
 
 functions:
   app:
-    handler: dist/main.handler
+    handler: dist/lambda.handler
     events:
       - http:
           path: /
@@ -29,12 +29,11 @@ functions:
       - http:
           path: /{proxy+}
           method: any
-  # checkEnv:
-  #   handler: handler.checkEnv
-  #   events:
-  #     - http:
-  #         path: check-env
-  #         method: get
+  recordHarvests:
+    handler: dist/lambda.recordHarvests
+    events:
+      - schedule:
+          rate: cron(0 9 * * ? *) # UTC 기준 매일 9시에 실행
 
 plugins:
   - serverless-offline
@@ -65,5 +64,6 @@ build:
       - reflect-metadata
       - rxjs
       - '@nestjs/platform-express'
+      - '@nestjs/schedule'
   exclude:
     - aws-sdk
