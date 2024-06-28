@@ -44,10 +44,19 @@ export class HarvestService extends BaseService {
     }));
   }
 
-  async processDailyHarvest(date: string): Promise<{ date: string; count: number }> {
-    // Fetch data to be processed for the day
+  async processDailyHarvest(
+    date: string,
+  ): Promise<{ date: string; count: number; isNew: boolean }> {
     const dateInDayjs = dayjs(date);
     const dateInNumber = +dateInDayjs.format('YYYYMMDD');
+
+    // Check if harvests for the date already exist
+    const existingHarvest = await this.harvestDbService.readHarvestsByDate(dateInNumber);
+    if (existingHarvest) {
+      return { date, count: 0, isNew: false };
+    }
+
+    // Fetch data to be processed for the day
     const dataToProcess = await this.fetchDataForDate(date); // This method should be implemented to fetch relevant data
     const countFinishedTasks = await this.tasksService.getAllFinishedTasksBetween(
       dateInDayjs.toDate(),
@@ -85,7 +94,7 @@ export class HarvestService extends BaseService {
     });
 
     await this.createBulkHarvests(createHarvestDtos);
-    return { date, count: createHarvestDtos.length };
+    return { date, count: createHarvestDtos.length, isNew: true };
   }
 
   private async fetchDataForDate(date: string): Promise<TimeLogGroupedByUserResponseDto[]> {

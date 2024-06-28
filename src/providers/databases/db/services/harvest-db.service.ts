@@ -33,4 +33,8 @@ export class HarvestDbService {
 
     return await this.harvestModel.find(query);
   }
+
+  async readHarvestsByDate(date: number): Promise<Harvest | null> {
+    return await this.harvestModel.findOne({ date });
+  }
 }

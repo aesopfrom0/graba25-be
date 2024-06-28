@@ -19,9 +19,13 @@ export class BatchService extends BaseService {
     this.logger.log(`[${this.recordHarvests.name}] Recording harvests for ${refDate}`);
     try {
       const result = await this.harvestService.processDailyHarvest(refDate);
-      this.logger.log(
-        `[${this.recordHarvests.name}] Recorded ${result.count} harvests for ${refDate}`,
-      );
+      if (!result.isNew) {
+        this.logger.log(
+          `[${this.recordHarvests.name}] Recorded ${result.count} harvests for ${refDate}`,
+        );
+      } else {
+        this.logger.log(`[${this.recordHarvests.name}] No new harvests to record for ${refDate}`);
+      }
       return result;
     } catch (e) {
       this.logger.error(`[${this.recordHarvests.name}] Error while recording harvests: ${e}`);
