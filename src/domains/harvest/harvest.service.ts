@@ -2,6 +2,7 @@ import { TasksService } from '@graba25-be/domains/tasks/tasks.service';
 import { TimeLogService } from '@graba25-be/domains/time-log/time-log.service';
 import { BaseService } from '@graba25-be/providers/base.service';
 import { HarvestDbService } from '@graba25-be/providers/databases/db/services/harvest-db.service';
+import { HarvestQueryDto } from '@graba25-be/shared/dtos/queries/harvest-query.dto';
 import { CreateHarvestRequestDto } from '@graba25-be/shared/dtos/requests/harvest-request.dto';
 import { HarvestResponseDto } from '@graba25-be/shared/dtos/responses/harvest-response.dto';
 import { TimeLogGroupedByUserResponseDto } from '@graba25-be/shared/dtos/responses/time-log-response.dto';
@@ -25,7 +26,7 @@ export class HarvestService extends BaseService {
       id,
       userId,
       date,
-      hoursInvested: (secondsInvested / 3600).toFixed(2),
+      secondsInvested,
       pomodoros,
       tasksCompleted,
     };
@@ -37,7 +38,7 @@ export class HarvestService extends BaseService {
       id: harvest.id,
       userId: harvest.userId,
       date: harvest.date,
-      hoursInvested: (harvest.secondsInvested / 3600).toFixed(2),
+      secondsInvested: harvest.secondsInvested,
       pomodoros: harvest.pomodoros,
       tasksCompleted: harvest.tasksCompleted,
     }));
@@ -92,5 +93,17 @@ export class HarvestService extends BaseService {
       dayjs(date).format(),
       dayjs(date).add(1, 'day').format(),
     );
+  }
+
+  async harvests(userId: string, queryDto: HarvestQueryDto): Promise<HarvestResponseDto[]> {
+    const harvests = await this.harvestDbService.readHarvestsByUserId(userId, queryDto);
+    return harvests.map((harvest) => ({
+      id: harvest.id,
+      userId: harvest.userId,
+      date: harvest.date,
+      secondsInvested: harvest.secondsInvested,
+      pomodoros: harvest.pomodoros,
+      tasksCompleted: harvest.tasksCompleted,
+    }));
   }
 }

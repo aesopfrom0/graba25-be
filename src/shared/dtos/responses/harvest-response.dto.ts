@@ -4,7 +4,7 @@ export class HarvestResponseDto {
   date!: number; // YYYYMMDD
   pomodoros!: number;
   tasksCompleted!: number;
-  hoursInvested!: string;
+  secondsInvested!: number;
   // createdAt!: string;
   // updatedAt!: string;
 }
