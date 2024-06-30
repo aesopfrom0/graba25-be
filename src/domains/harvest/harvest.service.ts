@@ -25,7 +25,7 @@ export class HarvestService extends BaseService {
     return {
       id,
       userId,
-      date,
+      date: this.formatDate(date),
       secondsInvested,
       pomodoros,
       tasksCompleted,
@@ -37,7 +37,7 @@ export class HarvestService extends BaseService {
     return harvests.map((harvest) => ({
       id: harvest.id,
       userId: harvest.userId,
-      date: harvest.date,
+      date: this.formatDate(harvest.date),
       secondsInvested: harvest.secondsInvested,
       pomodoros: harvest.pomodoros,
       tasksCompleted: harvest.tasksCompleted,
@@ -105,14 +105,25 @@ export class HarvestService extends BaseService {
   }
 
   async harvests(userId: string, queryDto: HarvestQueryDto): Promise<HarvestResponseDto[]> {
+    this.logger.debug(
+      `[${this.harvests.name}] userId: ${userId}, queryDto: ${JSON.stringify(queryDto)}`,
+    );
     const harvests = await this.harvestDbService.readHarvestsByUserId(userId, queryDto);
     return harvests.map((harvest) => ({
       id: harvest.id,
       userId: harvest.userId,
-      date: harvest.date,
+      date: this.formatDate(harvest.date),
       secondsInvested: harvest.secondsInvested,
       pomodoros: harvest.pomodoros,
       tasksCompleted: harvest.tasksCompleted,
     }));
+  }
+
+  private formatDate(dateNumber: number): string {
+    const dateString = dateNumber.toString();
+    const year = dateString.slice(0, 4);
+    const month = dateString.slice(4, 6);
+    const day = dateString.slice(6, 8);
+    return `${year}-${month}-${day}`;
   }
 }

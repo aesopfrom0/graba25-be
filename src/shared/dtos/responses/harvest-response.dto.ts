@@ -1,7 +1,7 @@
 export class HarvestResponseDto {
   id!: string;
   userId!: string;
-  date!: number; // YYYYMMDD
+  date!: string; // YYYY-MM-DD
   pomodoros!: number;
   tasksCompleted!: number;
   secondsInvested!: number;
