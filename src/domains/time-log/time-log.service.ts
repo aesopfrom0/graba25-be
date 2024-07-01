@@ -55,10 +55,11 @@ export class TimeLogService extends BaseService {
     userId?: string,
   ): Promise<TimeLogGroupedByUserResponseDto[]> {
     this.logger.debug(`[${this.getTimeLogsGroupedByUser.name}] Getting time logs grouped by user`);
-    return await this.timeLogDbService.getTimeLogsGroupedByUser(
+    const result = await this.timeLogDbService.getTimeLogsGroupedByUser(
       new Date(startDate),
       new Date(endDate),
       userId,
     );
+    return result;
   }
 }

@@ -138,6 +138,10 @@ export class TimeLogDbService extends BaseService {
           ErrorCode.TIME_LOG_NOT_FOUND,
         );
       }
+      await this.timeLogModel.updateOne(
+        { intervals: { $elemMatch: { _id: intervalId } } },
+        { $set: { 'intervals.$.end': dto.end } },
+      );
       return await this.readInterval(intervalId);
     } catch (e) {
       this.logger.error(e);
