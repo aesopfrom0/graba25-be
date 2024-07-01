@@ -1,5 +1,4 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import dayjs from 'dayjs';
 import { HarvestService } from '@graba25-be/domains/harvest/harvest.service';
 import { BaseService } from '@graba25-be/providers/base.service';
@@ -13,7 +12,7 @@ export class BatchService extends BaseService {
   }
 
   // 서버리스 환경에서는 아래 데코레이터가 동작하지 않음. serverless.yml에서 설정 필요
-  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  // @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async recordHarvests(): Promise<{ date: string; count: number }> {
     const refDate = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
     this.logger.log(`[${this.recordHarvests.name}] Recording harvests for ${refDate}`);
