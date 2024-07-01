@@ -6,6 +6,7 @@ export class UserResponseDto {
     this.displayName = user.displayName;
     this.email = user.email;
     this.googleId = user.googleId;
+    this.photoUrl = user.photoUrl;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;
   }
@@ -14,6 +15,7 @@ export class UserResponseDto {
   displayName!: string;
   email!: string;
   googleId?: string;
+  photoUrl?: string;
   createdAt!: Date;
   updatedAt!: Date;
 }
