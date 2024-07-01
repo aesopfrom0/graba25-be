@@ -15,7 +15,7 @@ import ApplicationException from '@graba25-be/shared/exceptions/application.exce
 import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export class TimeLogDbService extends BaseService {
   constructor(
@@ -151,17 +151,23 @@ export class TimeLogDbService extends BaseService {
   async getTimeLogsGroupedByUser(
     startDate: Date,
     endDate: Date,
+    userId?: string,
   ): Promise<TimeLogGroupedByUserResponseDto[]> {
     this.logger.debug(
       `[${this.getTimeLogsGroupedByUser.name}] startDate: ${startDate}, endDate: ${endDate}`,
     );
+    const matchStage: Partial<Record<string, any>> = {
+      updatedAt: { $gte: startDate, $lt: endDate },
+    };
+
+    if (userId) {
+      matchStage.user = new Types.ObjectId(userId);
+    }
 
     const timeLogs = await this.timeLogModel
       .aggregate([
         {
-          $match: {
-            updatedAt: { $gte: startDate, $lt: endDate },
-          },
+          $match: matchStage,
         },
         {
           $unwind: '$intervals',

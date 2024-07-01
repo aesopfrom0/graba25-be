@@ -7,7 +7,9 @@ import { CreateHarvestRequestDto } from '@graba25-be/shared/dtos/requests/harves
 import { HarvestResponseDto } from '@graba25-be/shared/dtos/responses/harvest-response.dto';
 import { TimeLogGroupedByUserResponseDto } from '@graba25-be/shared/dtos/responses/time-log-response.dto';
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import dayjs from 'dayjs';
+import { create } from 'domain';
 
 @Injectable()
 export class HarvestService extends BaseService {
@@ -44,28 +46,24 @@ export class HarvestService extends BaseService {
     }));
   }
 
-  async processDailyHarvest(
+  private async extractHarvestData(
     date: string,
-  ): Promise<{ date: string; count: number; isNew: boolean }> {
+    userId?: string,
+  ): Promise<CreateHarvestRequestDto[]> {
     const dateInDayjs = dayjs(date);
     const dateInNumber = +dateInDayjs.format('YYYYMMDD');
 
-    // Check if harvests for the date already exist
-    const existingHarvest = await this.harvestDbService.readHarvestsByDate(dateInNumber);
-    if (existingHarvest) {
-      return { date, count: 0, isNew: false };
-    }
-
     // Fetch data to be processed for the day
-    const dataToProcess = await this.fetchDataForDate(date); // This method should be implemented to fetch relevant data
+    const dataToProcess = await this.fetchDataForDate(date, userId);
     const countFinishedTasks = await this.tasksService.getAllFinishedTasksBetween(
       dateInDayjs.toDate(),
       dateInDayjs.add(1, 'day').toDate(),
+      userId,
     );
 
     // Process and create harvest records
     const userIdSet = new Set<string>();
-    const createHarvestDtos: CreateHarvestRequestDto[] = [];
+    const result: CreateHarvestRequestDto[] = [];
     for (const data of dataToProcess) {
       const userId = data.userId;
       userIdSet.add(userId);
@@ -77,13 +75,13 @@ export class HarvestService extends BaseService {
           countFinishedTasks.find((task) => task.userId === userId)?.totalFinishedTasks || 0,
         secondsInvested: data.totalSecondsInvested,
       };
-      createHarvestDtos.push(createHarvestDto);
+      result.push(createHarvestDto);
     }
 
     // Create harvest records for users who didn't have any time logs
     countFinishedTasks.forEach((user) => {
       if (!userIdSet.has(user.userId)) {
-        createHarvestDtos.push({
+        result.push({
           userId: user.userId,
           date: dateInNumber,
           pomodoros: 0,
@@ -92,15 +90,34 @@ export class HarvestService extends BaseService {
         });
       }
     });
+    return result;
+  }
+
+  async processDailyHarvest(
+    date: string,
+  ): Promise<{ date: string; count: number; isNew: boolean }> {
+    const dateInDayjs = dayjs(date);
+    const dateInNumber = +dateInDayjs.format('YYYYMMDD');
+    // Check if harvests for the date already exist
+    const existingHarvest = await this.harvestDbService.readHarvestsByDate(dateInNumber);
+    if (existingHarvest) {
+      return { date, count: 0, isNew: false };
+    }
+
+    const createHarvestDtos = await this.extractHarvestData(date);
 
     await this.createBulkHarvests(createHarvestDtos);
     return { date, count: createHarvestDtos.length, isNew: true };
   }
 
-  private async fetchDataForDate(date: string): Promise<TimeLogGroupedByUserResponseDto[]> {
+  private async fetchDataForDate(
+    date: string,
+    userId?: string,
+  ): Promise<TimeLogGroupedByUserResponseDto[]> {
     return await this.timeLogService.getTimeLogsGroupedByUser(
       dayjs(date).format(),
       dayjs(date).add(1, 'day').format(),
+      userId,
     );
   }
 
@@ -109,7 +126,7 @@ export class HarvestService extends BaseService {
       `[${this.harvests.name}] userId: ${userId}, queryDto: ${JSON.stringify(queryDto)}`,
     );
     const harvests = await this.harvestDbService.readHarvestsByUserId(userId, queryDto);
-    return harvests.map((harvest) => ({
+    const result = harvests.map((harvest) => ({
       id: harvest.id,
       userId: harvest.userId,
       date: this.formatDate(harvest.date),
@@ -117,6 +134,30 @@ export class HarvestService extends BaseService {
       pomodoros: harvest.pomodoros,
       tasksCompleted: harvest.tasksCompleted,
     }));
+    // 위 result의 마지막 날짜를 가져옴 (위 쿼리 변경 시 sort 필요)
+    const lastDay = result[result.length - 1]?.date;
+    const diff = Math.max(dayjs().diff(dayjs(lastDay), 'day') - 1, 0);
+    const today = dayjs();
+    for (let i = diff; i >= 0; i--) {
+      const data = await this.extractHarvestData(
+        today.subtract(i, 'day').format('YYYY-MM-DD'),
+        userId,
+      );
+      if (data.length > 0) {
+        data.forEach((harvest) => {
+          result.push({
+            id: randomUUID(),
+            userId: harvest.userId.toString(),
+            date: this.formatDate(harvest.date),
+            secondsInvested: harvest.secondsInvested,
+            pomodoros: harvest.pomodoros,
+            tasksCompleted: harvest.tasksCompleted,
+          });
+        });
+      }
+    }
+
+    return result;
   }
 
   private formatDate(dateNumber: number): string {

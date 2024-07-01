@@ -2,7 +2,7 @@ import ApplicationException from '@graba25-be/shared/exceptions/application.exce
 import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { BaseService } from 'src/providers/base.service';
 import { Task } from 'src/providers/databases/db/schemas/task.schema';
 import { BaseTaskDto, UpdateTaskDto } from 'src/shared/dtos/base-task.dto';
@@ -71,14 +71,21 @@ export class TaskDbService extends BaseService {
   async readAllFinishedTasksBetween(
     gteDate: Date,
     ltDate: Date,
+    userId?: string,
   ): Promise<TaskGroupedByUserResponseDto[]> {
     try {
+      const matchStage: Partial<Record<string, any>> = {
+        isFinished: true,
+        finishedAt: { $gte: gteDate, $lt: ltDate },
+      };
+
+      if (userId) {
+        matchStage.user = new Types.ObjectId(userId);
+      }
+
       const tasks = await this.taskModel.aggregate([
         {
-          $match: {
-            isFinished: true,
-            finishedAt: { $gte: gteDate, $lt: ltDate },
-          },
+          $match: matchStage,
         },
         {
           $group: {

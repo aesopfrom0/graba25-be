@@ -6,7 +6,7 @@ export class Harvest extends Document {
   @Prop({ required: true })
   userId!: string;
 
-  @Prop({ required: true, description: 'Date in YYYYMMDD format', example: 20240601 })
+  @Prop({ required: true, unique: true, description: 'Date in YYYYMMDD format', example: 20240601 })
   date!: number; // YYYYMMDD format
 
   @Prop({ required: true, description: 'Number of pomodoros completed', example: 5 })

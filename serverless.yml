@@ -33,7 +33,7 @@ functions:
     handler: dist/lambda.recordHarvests
     events:
       - schedule:
-          rate: cron(0 9 * * ? *) # UTC 기준 매일 9시에 실행
+          rate: cron(0 1 * * ? *) # UTC 기준 매일 1시에 실행
 
 plugins:
   - serverless-offline

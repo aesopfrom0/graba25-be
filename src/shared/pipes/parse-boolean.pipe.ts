@@ -10,7 +10,6 @@ export class ParseBooleanPipe implements PipeTransform {
           metadata.metatype?.prototype,
           key,
         );
-        console.log(booleanString);
         if (booleanString) {
           if (value[key] === '1' || value[key] === 'true') value[key] = true;
           if (value[key] === '0' || value[key] === 'false') value[key] = false;
