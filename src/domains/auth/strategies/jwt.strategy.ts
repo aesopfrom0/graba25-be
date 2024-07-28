@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
@@ -16,6 +16,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any): Promise<Partial<User>> {
+    const user = await this.usersService.user(payload.sub);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
     return {
       id: payload.sub,
       email: payload.email,
