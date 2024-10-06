@@ -54,6 +54,23 @@ export class AuthController {
     return res.redirect(`${this.configService.get('BY25_URL')}/sign-in?token=${accessToken}`);
   }
 
+  @Post('logout')
+  async logout(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+    if (refreshToken) {
+      await this.authService.revokeRefreshToken(refreshToken);
+    }
+
+    // 쿠키에서 리프레시 토큰을 제거합니다.
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+    });
+
+    return res.status(200).json({ message: 'Logged out successfully' });
+  }
+
   @Post('refresh-token')
   async refreshToken(@Req() req: Request, @Res() res: Response) {
     const refreshToken = req.cookies['refreshToken'];
