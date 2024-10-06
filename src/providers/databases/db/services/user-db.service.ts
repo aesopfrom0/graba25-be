@@ -90,4 +90,12 @@ export class UserDbService extends BaseService {
       { upsert: true },
     );
   }
+
+  async readRefreshToken(queryDto: { token: string; isRevoked: boolean }) {
+    return await this.refreshTokenModel.findOne(queryDto);
+  }
+
+  async updateRefreshToken(token: string, updateDto: { isRevoked: boolean }) {
+    await this.refreshTokenModel.updateOne({ token }, updateDto);
+  }
 }

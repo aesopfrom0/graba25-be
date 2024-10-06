@@ -2,13 +2,12 @@ import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
-import { UserId } from '@graba25-be/shared/decorators/user-id.decorator';
 import { UsersService } from '@graba25-be/domains/users/users.service';
-import dayjs from 'dayjs';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  private refreshTokenTtlInDays;
+  private refreshTokenTtlInDays: number;
 
   constructor(
     private authService: AuthService,
@@ -44,8 +43,7 @@ export class AuthController {
     const accessToken = await this.authService.generateAccessToken(user.id);
     const refreshToken = await this.authService.generateRefreshToken(user.id);
 
-    const expiresAt = dayjs().add(this.refreshTokenTtlInDays, 'day').toDate();
-    await this.authService.saveRefreshToken(user.id, refreshToken, expiresAt);
+    await this.authService.saveRefreshToken(user.id, refreshToken);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -57,9 +55,32 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  @UseGuards(AuthGuard('jwt'))
-  async refreshToken(@UserId() userId: string) {
-    const newAccessToken = await this.authService.generateAccessToken(userId);
-    return { accessToken: newAccessToken };
+  async refreshToken(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token not found' });
+    }
+
+    try {
+      // Validate the refresh token and generate new tokens
+      const userId = await this.authService.verifyRefreshToken(refreshToken);
+      const newAccessToken = await this.authService.generateAccessToken(userId);
+      const newRefreshToken = await this.authService.generateRefreshToken(userId);
+
+      // Revoke the old refresh token and save the new one
+      await this.authService.revokeRefreshToken(refreshToken);
+      await this.authService.saveRefreshToken(userId, newRefreshToken);
+
+      // Set the new refresh token in HttpOnly cookie
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
+      });
+
+      return res.json({ accessToken: newAccessToken });
+    } catch (error) {
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
   }
 }
