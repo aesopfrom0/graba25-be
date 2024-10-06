@@ -20,7 +20,7 @@ import { DbServicesModule } from '@graba25-be/providers/databases/db/db-services
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
-        signOptions: { expiresIn: '1d' },
+        signOptions: { expiresIn: `${configService.get('AUTH_ACCESS_TOKEN_TTL_IN_HOURS')}h` },
       }),
       inject: [ConfigService],
     }),

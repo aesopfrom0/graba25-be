@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  private refreshTokenTtlInDays;
+  private refreshTokenTtlInDays: number;
 
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
@@ -25,7 +25,7 @@ export class AuthService {
   }
 
   async generateRefreshToken(userId: string): Promise<string> {
-    return this.jwtService.sign({ userId }, { expiresIn: '7d' });
+    return this.jwtService.sign({ userId }, { expiresIn: `${this.refreshTokenTtlInDays}d` });
   }
 
   async saveRefreshToken(userId: string, token: string) {
