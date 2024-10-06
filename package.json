@@ -13,7 +13,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:local": "eslint './src/**/*.{ts,tsx}' && TZ=UTC NODE_ENV=local nest start --watch",
+    "start:local": "eslint './src/**/*.{ts,tsx}' && NODE_ENV=local nest start --watch",
     "start:dev": "NODE_ENV=dev nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=prod node dist/main",

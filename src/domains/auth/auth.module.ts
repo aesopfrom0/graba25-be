@@ -9,9 +9,11 @@ import { UserSchema } from '@graba25-be/providers/databases/db/schemas/user.sche
 import { JwtStrategy } from '@graba25-be/domains/auth/strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from '@graba25-be/domains/users/users.module';
+import { DbServicesModule } from '@graba25-be/providers/databases/db/db-services.module';
 
 @Module({
   imports: [
+    DbServicesModule,
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     PassportModule,
     JwtModule.registerAsync({

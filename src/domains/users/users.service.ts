@@ -15,7 +15,7 @@ export class UsersService {
     return await this.userDbService.readUser(id);
   }
 
-  async singUp(userDto: CreateUserBodyDto) {
+  async signUp(userDto: CreateUserBodyDto) {
     const existingUser = await this.userDbService.readUserByEmail(userDto.email);
     if (existingUser) {
       throw new ApplicationException(

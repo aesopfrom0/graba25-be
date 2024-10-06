@@ -29,13 +29,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     // Fetch user's time zone
     const timeZone = await this.getUserTimeZone(accessToken);
 
-    const user = await this.authService.validateUser({
+    const user = {
       googleId: id,
       displayName,
       email: emails[0].value,
       photoUrl: photos[0].value,
       timeZone,
-    });
+    };
     done(null, user);
   }
 

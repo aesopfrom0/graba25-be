@@ -10,11 +10,13 @@ export class CreateUserBodyDto {
   email!: string;
 
   @ApiProperty()
-  @IsStrongPassword({ minLength: 4 })
-  password!: string;
+  timeZone!: string;
 
   @ApiProperty()
-  timeZone!: string;
+  googleId?: string;
+
+  @ApiProperty()
+  photoUrl?: string;
 }
 
 export class UpdateUserBodyDto {

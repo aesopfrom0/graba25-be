@@ -14,6 +14,8 @@ export function validateSchema() {
     GOOGLE_CLIENT_ID: Joi.string().required(),
     GOOGLE_CLIENT_SECRET: Joi.string().required(),
     JWT_SECRET: Joi.string().required(),
+    AUTH_ACCESS_TOKEN_TTL_IN_HOURS: Joi.number().required(),
+    AUTH_REFRESH_TOKEN_TTL_IN_DAYS: Joi.number().required(),
     BY25_URL: Joi.string().required(),
   });
 }

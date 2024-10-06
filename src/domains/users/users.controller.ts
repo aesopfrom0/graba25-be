@@ -19,7 +19,7 @@ export class UsersController {
 
   @Post('')
   async signUp(@Body() userDto: CreateUserBodyDto) {
-    return await this.usersService.singUp(userDto);
+    return await this.usersService.signUp(userDto);
   }
 
   @Patch(':id')

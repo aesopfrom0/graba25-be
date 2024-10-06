@@ -7,8 +7,11 @@ import { TransformInterceptor } from '@graba25-be/shared/interceptors/transform-
 
 export async function createApp(): Promise<INestApplication> {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
   const configService = app.get(ConfigService);
+  app.enableCors({
+    origin: configService.get('BY25_URL'),
+    credentials: true,
+  });
 
   console.log('environment ===> ', process.env.NODE_ENV);
 

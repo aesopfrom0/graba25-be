@@ -13,7 +13,7 @@ import { UserDbService } from '@graba25-be/providers/databases/db/services/user-
 import { TimeLogDbService } from '@graba25-be/providers/databases/db/services/time-log-db.service';
 import { HarvestSchema } from '@graba25-be/providers/databases/db/schemas/harvest.schema';
 import { HarvestDbService } from '@graba25-be/providers/databases/db/services/harvest-db.service';
-// import { TimeLogDbService } from '@graba25-be/providers/databases/db/services/time-log-db.service';
+import { RefreshTokenSchema } from '@graba25-be/providers/databases/db/schemas/refresh-token.schema';
 
 @Module({
   imports: [
@@ -24,6 +24,7 @@ import { HarvestDbService } from '@graba25-be/providers/databases/db/services/ha
       { name: 'TimeLog', schema: TimeLogSchema },
       { name: 'Interval', schema: IntervalSchema },
       { name: 'Harvest', schema: HarvestSchema },
+      { name: 'RefreshToken', schema: RefreshTokenSchema },
     ]),
   ],
   providers: [TaskDbService, UserDbService, ProjectDbService, TimeLogDbService, HarvestDbService],

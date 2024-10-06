@@ -1,16 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
-import ApplicationException from '@graba25-be/shared/exceptions/application.exception';
-import { ErrorCode } from '@graba25-be/shared/exceptions/error-code';
+import { UserDbService } from '@graba25-be/providers/databases/db/services/user-db.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
+    private userDbService: UserDbService,
   ) {}
 
   async validateUser(user: Partial<User>): Promise<any> {
@@ -31,16 +31,15 @@ export class AuthService {
     return { accessToken: token };
   }
 
-  // 사용자 ID를 사용하여 새로운 액세스 토큰을 생성하는 메서드
   async generateAccessToken(userId: string): Promise<string> {
-    const user = await this.userModel.findById(userId);
-    if (!user) {
-      throw new ApplicationException(
-        new NotFoundException('User not exists'),
-        ErrorCode.USER_NOT_EXISTS,
-      );
-    }
-    const payload = { sub: user.id, email: user.email, googleId: user.googleId };
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign({ sub: userId });
+  }
+
+  async generateRefreshToken(userId: string): Promise<string> {
+    return this.jwtService.sign({ userId }, { expiresIn: '7d' });
+  }
+
+  async saveRefreshToken(userId: string, token: string, expiresAt: Date) {
+    await this.userDbService.upsertRefreshToken(userId, token, expiresAt);
   }
 }
