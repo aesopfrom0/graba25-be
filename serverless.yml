@@ -2,6 +2,8 @@ service: graba25-api
 
 provider:
   name: aws
+  httpApi:
+    cors: true
   runtime: nodejs20.x
   region: ap-northeast-2
   stage: ${opt:stage, 'dev'}
@@ -25,10 +27,7 @@ functions:
   app:
     handler: dist/lambda.handler
     events:
-      - http:
-          path: /
-          method: any
-      - http:
+      - httpApi:  # http: 대신 httpApi: 사용
           path: /{proxy+}
           method: any
   recordHarvests:
@@ -55,7 +54,7 @@ build:
     # Enable minifying function code. (Default: false)
     minify: false
     sourcemap: true
-    target: node20
+    target: node22
     external:
       - express
       - cache-manager

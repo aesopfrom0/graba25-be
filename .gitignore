@@ -43,3 +43,6 @@ lerna-debug.log*
 
 # AWS
 AWSCLIV2.pkg
+
+# packages
+package-lock*
