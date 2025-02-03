@@ -33,7 +33,7 @@ export class AuthController {
     if (!user) {
       user = await this.usersService.signUp({
         googleId: googleUser.googleId,
-        name: googleUser.displayName,
+        displayName: googleUser.displayName,
         email: googleUser.email,
         photoUrl: googleUser.photoUrl,
         timeZone: googleUser.timeZone,

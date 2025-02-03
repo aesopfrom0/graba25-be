@@ -3,7 +3,7 @@ import { IsEmail, IsOptional, IsStrongPassword } from 'class-validator';
 
 export class CreateUserBodyDto {
   @ApiProperty()
-  name!: string;
+  displayName!: string;
 
   @ApiProperty()
   @IsEmail()
