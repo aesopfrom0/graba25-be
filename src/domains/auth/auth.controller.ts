@@ -8,6 +8,7 @@ import { Request, Response } from 'express';
 @Controller('auth')
 export class AuthController {
   private refreshTokenTtlInDays: number;
+  private isLocal = false;
 
   constructor(
     private authService: AuthService,
@@ -15,6 +16,7 @@ export class AuthController {
     private usersService: UsersService,
   ) {
     this.refreshTokenTtlInDays = +(this.configService.get('AUTH_REFRESH_TOKEN_TTL_IN_DAYS') ?? 1);
+    this.isLocal = this.configService.get('NODE_ENV') === 'local';
   }
 
   @Get('google')
@@ -47,7 +49,7 @@ export class AuthController {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: this.isLocal ? false : true,
       maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
     });
 
@@ -64,8 +66,8 @@ export class AuthController {
     // 쿠키에서 리프레시 토큰을 제거합니다.
     res.clearCookie('refreshToken', {
       httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
+      secure: this.isLocal ? false : true,
+      sameSite: this.isLocal ? 'lax' : 'none',
     });
 
     return res.status(200).json({ message: 'Logged out successfully' });
@@ -91,7 +93,8 @@ export class AuthController {
       // Set the new refresh token in HttpOnly cookie
       res.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: this.isLocal ? false : true,
+        sameSite: this.isLocal ? 'lax' : 'none',
         maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
       });
 
