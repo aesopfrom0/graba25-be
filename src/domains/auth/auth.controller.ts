@@ -42,7 +42,7 @@ export class AuthController {
       });
     }
 
-    const accessToken = await this.authService.generateAccessToken(user.id);
+    const { accessToken, expirationTime } = await this.authService.generateAccessTokenData(user.id);
     const refreshToken = await this.authService.generateRefreshToken(user.id);
 
     await this.authService.saveRefreshToken(user.id, refreshToken);
@@ -53,7 +53,11 @@ export class AuthController {
       maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
     });
 
-    return res.redirect(`${this.configService.get('BY25_URL')}/sign-in?token=${accessToken}`);
+    return res.redirect(
+      `${this.configService.get(
+        'BY25_URL',
+      )}/sign-in?token=${accessToken}&expirationTime=${expirationTime}`,
+    );
   }
 
   @Post('logout')
@@ -83,7 +87,8 @@ export class AuthController {
     try {
       // Validate the refresh token and generate new tokens
       const userId = await this.authService.verifyRefreshToken(refreshToken);
-      const newAccessToken = await this.authService.generateAccessToken(userId);
+      const { accessToken: newAccessToken, expirationTime } =
+        await this.authService.generateAccessTokenData(userId);
       const newRefreshToken = await this.authService.generateRefreshToken(userId);
 
       // Revoke the old refresh token and save the new one
@@ -98,7 +103,7 @@ export class AuthController {
         maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
       });
 
-      return res.json({ accessToken: newAccessToken });
+      return res.json({ accessToken: newAccessToken, expirationTime });
     } catch (error) {
       return res.status(401).json({ message: 'Invalid refresh token' });
     }

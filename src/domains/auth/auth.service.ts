@@ -6,9 +6,11 @@ import { User } from '@graba25-be/providers/databases/db/schemas/user.schema';
 import { UserDbService } from '@graba25-be/providers/databases/db/services/user-db.service';
 import dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
+import { AccessTokenResponseDto } from '@graba25-be/shared/dtos/responses/token-response.dto';
 
 @Injectable()
 export class AuthService {
+  private accessTokenTtlInHours: number;
   private refreshTokenTtlInDays: number;
 
   constructor(
@@ -17,11 +19,15 @@ export class AuthService {
     private userDbService: UserDbService,
     private configService: ConfigService,
   ) {
-    this.refreshTokenTtlInDays = +(this.configService.get('AUTH_REFRESH_TOKEN_TTL_IN_DAYS') ?? 1);
+    this.refreshTokenTtlInDays = +(this.configService.get('AUTH_REFRESH_TOKEN_TTL_IN_DAYS') ?? 30);
+    this.accessTokenTtlInHours = +(this.configService.get('AUTH_REFRESH_TOKEN_TTL_IN_DAYS') ?? 12);
   }
 
-  async generateAccessToken(userId: string): Promise<string> {
-    return this.jwtService.sign({ userId });
+  async generateAccessTokenData(userId: string): Promise<AccessTokenResponseDto> {
+    return {
+      accessToken: await this.jwtService.signAsync({ userId }),
+      expirationTime: dayjs().add(this.accessTokenTtlInHours, 'hour').unix(),
+    };
   }
 
   async generateRefreshToken(userId: string): Promise<string> {
