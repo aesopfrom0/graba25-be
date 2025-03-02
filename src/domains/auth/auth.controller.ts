@@ -100,6 +100,8 @@ export class AuthController {
         httpOnly: true,
         secure: this.isLocal ? false : true,
         sameSite: this.isLocal ? 'lax' : 'none',
+        domain: this.isLocal ? 'localhost' : 'by25.vercel.app',
+        path: '/',
         maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
       });
 
