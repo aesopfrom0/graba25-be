@@ -50,6 +50,8 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: this.isLocal ? false : true,
+      sameSite: this.isLocal ? 'lax' : 'none', // 추가된 부분
+      path: '/', // 추가된 부분
       maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
     });
 
@@ -100,7 +102,6 @@ export class AuthController {
         httpOnly: true,
         secure: this.isLocal ? false : true,
         sameSite: this.isLocal ? 'lax' : 'none',
-        domain: this.isLocal ? 'localhost' : 'by25.vercel.app',
         path: '/',
         maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
       });
