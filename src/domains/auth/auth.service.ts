@@ -20,7 +20,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {
     this.refreshTokenTtlInDays = +(this.configService.get('AUTH_REFRESH_TOKEN_TTL_IN_DAYS') ?? 30);
-    this.accessTokenTtlInHours = +(this.configService.get('AUTH_REFRESH_TOKEN_TTL_IN_DAYS') ?? 12);
+    this.accessTokenTtlInHours = +(this.configService.get('AUTH_ACCESS_TOKEN_TTL_IN_HOURS') ?? 12);
   }
 
   async generateAccessTokenData(userId: string): Promise<AccessTokenResponseDto> {
