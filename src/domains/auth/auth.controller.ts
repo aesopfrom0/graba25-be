@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
@@ -7,6 +7,8 @@ import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
+  private logger = new Logger(AuthController.name);
+
   private refreshTokenTtlInDays: number;
   private isLocal = false;
 
@@ -29,6 +31,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
     const googleUser = req.user;
 
     let user = await this.usersService.getUserByEmail(googleUser.email);
@@ -47,12 +50,14 @@ export class AuthController {
 
     await this.authService.saveRefreshToken(user.id, refreshToken);
 
+    res.setHeader('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: this.isLocal ? false : true,
       sameSite: this.isLocal ? 'lax' : 'none', // 추가된 부분
       path: '/', // 추가된 부분
       maxAge: this.refreshTokenTtlInDays * 24 * 60 * 60 * 1000,
+      // maxAge: 60 * 1000, // 60초 테스트
     });
 
     return res.redirect(
@@ -81,6 +86,7 @@ export class AuthController {
 
   @Post('refresh-token')
   async refreshToken(@Req() req: Request, @Res() res: Response) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
     const refreshToken = req.cookies['refreshToken'];
     if (!refreshToken) {
       return res.status(401).json({ message: 'Refresh token not found' });
@@ -89,6 +95,7 @@ export class AuthController {
     try {
       // Validate the refresh token and generate new tokens
       const userId = await this.authService.verifyRefreshToken(refreshToken);
+      this.logger.debug(`[refreshToken] userId: ${userId}`);
       const { accessToken: newAccessToken, expirationTime } =
         await this.authService.generateAccessTokenData(userId);
       const newRefreshToken = await this.authService.generateRefreshToken(userId);
@@ -96,6 +103,8 @@ export class AuthController {
       // Revoke the old refresh token and save the new one
       await this.authService.revokeRefreshToken(refreshToken);
       await this.authService.saveRefreshToken(userId, newRefreshToken);
+
+      this.logger.debug(`[refreshToken] userId: ${userId} ===> 새 리프레시 토큰 생성 완료`);
 
       // Set the new refresh token in HttpOnly cookie
       res.cookie('refreshToken', newRefreshToken, {
